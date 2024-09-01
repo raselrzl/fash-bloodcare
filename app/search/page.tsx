@@ -31,11 +31,12 @@ const Search: React.FC = () => {
   const [cities, setCities] = useState<string[]>([]);
   const bloodGroups = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
 
+  console.log(BASE_API_URL)
+
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        // Add a cache-busting query parameter
         const response = await fetch(`${BASE_API_URL}/api/userdata`);
         if (!response.ok) {
           throw new Error("Network response was not ok");
