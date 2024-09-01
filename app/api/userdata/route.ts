@@ -1,11 +1,9 @@
 import { NextResponse } from 'next/server';
-import { connectToDatabase, disconnectFromDatabase } from '@/lib/mongodb';
+import { connectToDatabase } from '@/lib/mongodb';  // Removed disconnectFromDatabase
 
 export async function GET() {
-  let client;
   try {
     const { client: mongoClient, database } = await connectToDatabase();
-    client = mongoClient;
     const collection = database.collection('bloodgroup'); // Replace with your collection name
 
     // Fetch data
@@ -24,9 +22,5 @@ export async function GET() {
       { message: 'Error fetching data', error: (error as Error).message },
       { status: 500 }
     );
-  } finally {
-    if (client) {
-      await disconnectFromDatabase();
-    }
   }
 }
