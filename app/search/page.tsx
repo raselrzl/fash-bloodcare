@@ -37,18 +37,21 @@ const Search: React.FC = () => {
     const fetchData = async () => {
       setIsLoading(true);
       try {
+        console.log('Fetching data from:', `${BASE_API_URL}/api/userdata`);
         const response = await fetch(`${BASE_API_URL}/api/userdata`);
+        console.log('Response status:', response.status, response.statusText);
         if (!response.ok) {
-          throw new Error("Network response was not ok");
+          const errorText = await response.text();
+          console.error('Error response:', errorText);
+          throw new Error(`Network response was not ok: ${response.status}`);
         }
         const data: User[] = await response.json();
+        console.log('Fetched data:', data);
         setUsers(data);
-        const uniqueRegions = Array.from(
-          new Set(data.map((user) => user.region))
-        );
+        const uniqueRegions = Array.from(new Set(data.map((user) => user.region)));
         setRegions(uniqueRegions);
       } catch (error) {
-        console.error("Failed to fetch users:", error);
+        console.error('Failed to fetch users:', error);
       } finally {
         setIsLoading(false);
       }
