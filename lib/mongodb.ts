@@ -2,36 +2,31 @@ import { MongoClient, Db } from 'mongodb';
 
 const uri = process.env.MONGODB_URI as string;
 
-if (!uri) {
-  throw new Error('MONGODB_URI environment variable is not defined');
-}
-
+const options = {
+  serverSelectionTimeoutMS: 10000,
+  ssl: true,
+};
 let client: MongoClient | null = null;
+let clientPromise: Promise<MongoClient>;
+
+if (!process.env.MONGODB_URI) {
+  throw new Error('Please add your MongoDB URI to .env.local');
+}
+
 let database: Db | null = null;
-
-export async function connectToDatabase() {
-  if (client && database) {
-    return { client, database };
-  }
-
-  try {
-    console.log('Connecting to MongoDB...');
-    client = new MongoClient(uri); // No need for `useNewUrlParser` and `useUnifiedTopology`
-    await client.connect();
-    console.log('Connected to MongoDB');
-    database = client.db('ZIRRAH'); // Replace with your database name
-    return { client, database };
-  } catch (error) {
-    console.error('Failed to connect to MongoDB:', error);
-    throw error;
-  }
+declare global {
+  var _mongoClientPromise: Promise<MongoClient> | null;
 }
 
-export async function disconnectFromDatabase() {
-  if (client) {
-    await client.close();
-    console.log('MongoDB connection closed');
-    client = null;
-    database = null;
+if (process.env.NODE_ENV === 'development') {
+  if (!global._mongoClientPromise) {
+    client = new MongoClient(uri, options);
+    global._mongoClientPromise = client.connect();
   }
+  clientPromise = global._mongoClientPromise!;
+} else {
+  client = new MongoClient(uri, options);
+  clientPromise = client.connect();
 }
+
+export default clientPromise;
