@@ -1,3 +1,6 @@
+// components/NavigationLink.tsx
+"use client";
+
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { FaUserPlus, FaCheckCircle, FaHome, FaEnvelope, FaSearch } from 'react-icons/fa';
@@ -42,8 +45,6 @@ const NavigationLink: React.FC = () => {
     <div
       className={`fixed bottom-0 left-0 right-0 bg-black bg-opacity-75 p-4 md:p-6 rounded-t-lg shadow-lg flex items-center justify-center gap-2 md:gap-4 lg:gap-8 text-sm md:text-base lg:text-lg transition-transform duration-300 ${isVisible ? 'translate-y-0' : 'translate-y-full'}`}
     >
-      
-
       <Link href="/search" className={getLinkClass('/search')} aria-label="Search">
         <FaSearch className="inline-block mr-1 md:mr-2 text-lg md:text-xl lg:text-2xl" />
         <span className="hidden md:inline">Search</span>
@@ -59,11 +60,10 @@ const NavigationLink: React.FC = () => {
         <span className="hidden md:inline">Home</span>
       </Link>
 
-        <Link href="/register" className={getLinkClass('/register')} aria-label="Register">
-          <FaUserPlus className="inline-block mr-1 md:mr-2 text-lg md:text-xl lg:text-2xl" />
-          <span className="hidden md:inline">Register</span>
-        </Link>
-
+      <Link href="/register" className={getLinkClass('/register')} aria-label="Register">
+        <FaUserPlus className="inline-block mr-1 md:mr-2 text-lg md:text-xl lg:text-2xl" />
+        <span className="hidden md:inline">Register</span>
+      </Link>
 
       <a
         href="mailto:raselz.se@gmail.com"
