@@ -16,6 +16,7 @@ import {
 
 const Search: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
+  const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [search, setSearch] = useState({
     name: "",
@@ -30,51 +31,39 @@ const Search: React.FC = () => {
   const [cities, setCities] = useState<string[]>([]);
   const bloodGroups = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
 
-  // Function to fetch users based on search criteria
-  const fetchUsers = async () => {
-    setIsLoading(true);
-    try {
-      // Build query string based on search criteria
-      const queryParams = new URLSearchParams();
-      Object.entries(search).forEach(([key, value]) => {
-        if (value) queryParams.append(key, value);
-      });
-
-      console.log("Fetching data from:", `${BASE_API_URL}/api/userdata?${queryParams}`);
-      const response = await fetch(`${BASE_API_URL}/api/userdata?${queryParams}`);
-      console.log("Response status:", response.status, response.statusText);
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error("Error response:", errorText);
-        throw new Error(`Network response was not ok: ${response.status}`);
-      }
-
-      const data: User[] = await response.json();
-      console.log("Fetched data:", data);
-      setUsers(data);
-
-      // Extract unique regions from the fetched data
-      const uniqueRegions = Array.from(new Set(data.map((user) => user.region)));
-      setRegions(uniqueRegions);
-    } catch (error) {
-      console.error("Failed to fetch users:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  console.log(BASE_API_URL)
 
   useEffect(() => {
-    // Fetch users initially and set an interval for refreshing the data
-    fetchUsers();
-    const intervalId = setInterval(fetchUsers, 300000); // Refresh every 5 minutes
+    const fetchData = async () => {
+      setIsLoading(true);
+      try {
+        console.log('Fetching data from:', `${BASE_API_URL}/api/userdata`);
+        const response = await fetch(`${BASE_API_URL}/api/userdata`);
+        console.log('Response status:', response.status, response.statusText);
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error('Error response:', errorText);
+          throw new Error(`Network response was not ok: ${response.status}`);
+        }
+        const data: User[] = await response.json();
+        console.log('Fetched data:', data);
+        setUsers(data);
+        const uniqueRegions = Array.from(new Set(data.map((user) => user.region)));
+        setRegions(uniqueRegions);
+      } catch (error) {
+        console.error('Failed to fetch users:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+  
+    fetchData();
+  
+    const intervalId = setInterval(fetchData, 300000);
     return () => clearInterval(intervalId);
   }, []);
-
-  useEffect(() => {
-    // Fetch users whenever the search criteria change
-    fetchUsers();
-  }, [search]);
+  
+  
 
   useEffect(() => {
     const getCities = (region: string) => {
@@ -164,9 +153,23 @@ const Search: React.FC = () => {
     setCities(getCities(search.region));
   }, [search.region]);
 
-  const handleSearchChange = (key: string, value: string) => {
-    setSearch((prevSearch) => ({ ...prevSearch, [key]: value }));
-  };
+  useEffect(() => {
+    const filtered = users.filter(
+      (user) =>
+        (search.name
+          ? user.name.toLowerCase().includes(search.name.toLowerCase())
+          : true) &&
+        (search.nidNumber ? user.nidNumber === search.nidNumber : true) &&
+        (search.village ? user.village === search.village : true) &&
+        (search.phoneNumber
+          ? user.phoneNumber.includes(search.phoneNumber)
+          : true) &&
+        (search.bloodGroup ? user.bloodGroup === search.bloodGroup : true) &&
+        (search.city ? user.city === search.city : true) &&
+        (search.region ? user.region === search.region : true)
+    );
+    setFilteredUsers(filtered);
+  }, [search, users]);
 
   return (
     <div className="min-h-screen flex flex-col items-center text-gray-200 py-4 px-2 overflow-x-hidden">
@@ -179,21 +182,25 @@ const Search: React.FC = () => {
           <input
             type="text"
             value={search.name}
-            onChange={(e) => handleSearchChange("name", e.target.value)}
+            onChange={(e) => setSearch({ ...search, name: e.target.value })}
             placeholder="Search by Name"
             className="bg-gray-800 text-white border border-gray-700 px-4 py-2 w-full md:w-1/3"
           />
           <input
             type="text"
             value={search.nidNumber}
-            onChange={(e) => handleSearchChange("nidNumber", e.target.value)}
+            onChange={(e) =>
+              setSearch({ ...search, nidNumber: e.target.value })
+            }
             placeholder="Search by NID Number"
             className="bg-gray-800 text-white border border-gray-700 px-4 py-2 w-full md:w-1/3"
           />
           <input
             type="text"
             value={search.phoneNumber}
-            onChange={(e) => handleSearchChange("phoneNumber", e.target.value)}
+            onChange={(e) =>
+              setSearch({ ...search, phoneNumber: e.target.value })
+            }
             placeholder="Search by Phone Number"
             className="bg-gray-800 text-white border border-gray-700 px-4 py-2 w-full md:w-1/3"
           />
@@ -201,7 +208,9 @@ const Search: React.FC = () => {
         <div className="flex flex-col justify-center mt-2 md:flex-row md:space-x-4 space-y-4 md:space-y-0">
           <select
             value={search.bloodGroup}
-            onChange={(e) => handleSearchChange("bloodGroup", e.target.value)}
+            onChange={(e) =>
+              setSearch({ ...search, bloodGroup: e.target.value })
+            }
             className="bg-gray-800 text-white border border-gray-700 px-4 py-2 w-full md:w-1/3"
           >
             <option value="">Search by Blood Group</option>
@@ -213,7 +222,9 @@ const Search: React.FC = () => {
           </select>
           <select
             value={search.region}
-            onChange={(e) => handleSearchChange("region", e.target.value)}
+            onChange={(e) =>
+              setSearch({ ...search, region: e.target.value, city: "" })
+            }
             className="bg-gray-800 text-white border border-gray-700 px-4 py-2 w-full md:w-1/3"
           >
             <option value="">Select Region</option>
@@ -225,7 +236,7 @@ const Search: React.FC = () => {
           </select>
           <select
             value={search.city}
-            onChange={(e) => handleSearchChange("city", e.target.value)}
+            onChange={(e) => setSearch({ ...search, city: e.target.value })}
             className="bg-gray-800 text-white border border-gray-700 px-4 py-2 w-full md:w-1/3"
           >
             <option value="">Select City</option>
@@ -236,46 +247,102 @@ const Search: React.FC = () => {
             ))}
           </select>
         </div>
-        {/* Removed manual filtering button and logic, fetch happens automatically on change */}
+        <div className="flex justify-center m-4">
+          <button
+            onClick={() =>
+              setFilteredUsers(
+                users.filter(
+                  (user) =>
+                    (search.name
+                      ? user.name
+                          .toLowerCase()
+                          .includes(search.name.toLowerCase())
+                      : true) &&
+                    (search.nidNumber
+                      ? user.nidNumber === search.nidNumber
+                      : true) &&
+                    (search.village ? user.village === search.village : true) &&
+                    (search.phoneNumber
+                      ? user.phoneNumber.includes(search.phoneNumber)
+                      : true) &&
+                    (search.bloodGroup
+                      ? user.bloodGroup === search.bloodGroup
+                      : true) &&
+                    (search.city ? user.city === search.city : true) &&
+                    (search.region ? user.region === search.region : true)
+                )
+              )
+            }
+            className="relative px-20 py-2.5 font-bold text-white bg-transparent border-2 border-transparent overflow-hidden group"
+          >
+            <span className="absolute inset-0 border-2 border-gradient opacity-70 group-hover:opacity-100 transition-opacity duration-300"></span>
+            <span className="relative z-10">Search</span>
+          </button>
+        </div>
       </div>
 
       {isLoading ? (
         <LoadingSpinner />
       ) : (
         <div className="grid grid-cols-1 gap-6 md:grid-cols-3 lg:grid-cols-4">
-          {users.map((user, index) => (
+          {filteredUsers.map((user, index) => (
             <div
               key={index}
-              className="bg-gradient-to-r from-gray-800 via-gray-900 to-black text-white p-4 rounded-lg"
+              className="bg-gradient-to-r from-gray-800 via-gray-900 to-black text-white p-6 shadow-lg border border-gray-700 transition-transform transform hover:scale-105"
             >
-              <div className="flex justify-center mb-2">
-                <FaUser size={50} />
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-2xl font-semibold flex items-center">
+                  <FaUser className="mr-2 text-green-300" />
+                  {user.name}
+                </h2>
+                <a
+                  href={`tel:${user.phoneNumber}`}
+                  className="text-green-500 hover:text-green-200"
+                >
+                  <FaPhoneAlt className="text-2xl" />
+                </a>
+              </div>{/* 
+              <div className="mb-2">
+                <p className="flex items-center text-sm">
+                  <FaIdCard className="mr-2 text-green-500" />
+                  NID: {user.nidNumber}
+                </p>
+              </div> */}
+              <div className="mb-2">
+                <p className="flex items-center text-sm">
+                  <FaPhone className="mr-2 text-green-500" />
+                  {user.phoneNumber}
+                </p>
               </div>
-              <h2 className="text-xl text-center">{user.name}</h2>
-              <p className="text-center">
-                <FaPhoneAlt className="inline mr-2" />
-                {user.phoneNumber}
-              </p>
-              <p className="text-center">
-                <FaHeartbeat className="inline mr-2" />
-                Blood Group: {user.bloodGroup}
-              </p>
-              <p className="text-center">
-                <FaMapMarkerAlt className="inline mr-2" />
-                Village: {user.village}
-              </p>
-              <p className="text-center">
-                <FaCity className="inline mr-2" />
-                City: {user.city}
-              </p>
-              <p className="text-center">
-                <FaHome className="inline mr-2" />
-                Region: {user.region}
-              </p>
+              <div className="mb-2">
+                <p className="flex items-center text-sm">
+                  <FaHome className="mr-2 text-green-500" />
+                  Village/Area: {user.village}
+                </p>
+              </div>
+              <div className="mb-2">
+                <p className="flex items-center text-sm">
+                  <FaHeartbeat className="mr-2 text-green-500" />
+                  Blood Group: {user.bloodGroup}
+                </p>
+              </div>
+              <div className="mb-2">
+                <p className="flex items-center text-sm">
+                  <FaCity className="mr-2 text-green-500" />
+                  City: {user.city}
+                </p>
+              </div>
+              <div>
+                <p className="flex items-center text-sm">
+                  <FaMapMarkerAlt className="mr-2 text-green-500" />
+                  Region: {user.region}
+                </p>
+              </div>
             </div>
           ))}
         </div>
       )}
+      <NavigationLink />
     </div>
   );
 };
