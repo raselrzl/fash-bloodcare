@@ -1,16 +1,15 @@
-import clientPromise from '@/lib/mongodb';
+// app/api/adduser/route.ts
 import { NextResponse } from 'next/server';
+import { connectToDatabase, disconnectFromDatabase } from '@/lib/mongodb';
 
 export async function POST(request: Request) {
   try {
-    // Ensure we have a connected client
-    const client = await clientPromise;
-    const database = client.db('ZIRRAH'); // Use your database name here
-    const collection = database.collection('bloodgroup'); // Use your collection name here
+    const { database } = await connectToDatabase();
+    const collection = database.collection('bloodgroup'); // Replace with your collection name
 
     const userData = await request.json(); // Parse the incoming JSON data
 
-    // Check if phone number, NID, or email already exists
+    // Check if phone number or NID already exists
     const existingUser = await collection.findOne({
       $or: [
         { phoneNumber: userData.phoneNumber },
@@ -54,5 +53,7 @@ export async function POST(request: Request) {
       { message: 'Failed to add user', error: (error as Error).message },
       { status: 500 }
     );
+  } finally {
+    await disconnectFromDatabase();
   }
 }

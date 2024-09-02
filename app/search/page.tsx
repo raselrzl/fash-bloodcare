@@ -31,27 +31,23 @@ const Search: React.FC = () => {
   const [cities, setCities] = useState<string[]>([]);
   const bloodGroups = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
 
-  console.log(BASE_API_URL)
-
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        console.log('Fetching data from:', `${BASE_API_URL}/api/userdata`);
+        // Add a cache-busting query parameter
         const response = await fetch(`${BASE_API_URL}/api/userdata`);
-        console.log('Response status:', response.status, response.statusText);
         if (!response.ok) {
-          const errorText = await response.text();
-          console.error('Error response:', errorText);
-          throw new Error(`Network response was not ok: ${response.status}`);
+          throw new Error("Network response was not ok");
         }
         const data: User[] = await response.json();
-        console.log('Fetched data:', data);
         setUsers(data);
-        const uniqueRegions = Array.from(new Set(data.map((user) => user.region)));
+        const uniqueRegions = Array.from(
+          new Set(data.map((user) => user.region))
+        );
         setRegions(uniqueRegions);
       } catch (error) {
-        console.error('Failed to fetch users:', error);
+        console.error("Failed to fetch users:", error);
       } finally {
         setIsLoading(false);
       }
