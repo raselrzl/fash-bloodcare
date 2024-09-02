@@ -1,14 +1,13 @@
-// components/NavigationLink.tsx
 "use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
 import { FaUserPlus, FaCheckCircle, FaHome, FaEnvelope, FaSearch } from 'react-icons/fa';
 
 const NavigationLink: React.FC = () => {
   const [currentPath, setCurrentPath] = useState<string | null>(null);
   const [isVisible, setIsVisible] = useState(true);
-  let lastScrollTop = 0;
+  const lastScrollTop = useRef(0);  // Use useRef to persist the scroll position
 
   useEffect(() => {
     const { pathname } = window.location;
@@ -17,7 +16,7 @@ const NavigationLink: React.FC = () => {
     const handleScroll = () => {
       const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
 
-      if (scrollTop > lastScrollTop) {
+      if (scrollTop > lastScrollTop.current) {
         // Scrolling down
         setIsVisible(false);
       } else {
@@ -25,7 +24,7 @@ const NavigationLink: React.FC = () => {
         setIsVisible(true);
       }
 
-      lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+      lastScrollTop.current = scrollTop <= 0 ? 0 : scrollTop;
     };
 
     window.addEventListener('scroll', handleScroll);
