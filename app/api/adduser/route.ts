@@ -1,11 +1,13 @@
-// app/api/adduser/route.ts
 import { NextResponse } from 'next/server';
 import { connectToDatabase, disconnectFromDatabase } from '@/lib/mongodb';
 
+const dbName = 'ZIRRAH'; // Define your database name here
+
 export async function POST(request: Request) {
   try {
-    const { database } = await connectToDatabase();
-    const collection = database.collection('bloodgroup'); // Replace with your collection name
+    const { client } = await connectToDatabase(); // Get the client only
+    const database = client.db(dbName); // Specify the database name
+    const collection = database.collection('bloodgroup'); // Specify the collection
 
     const userData = await request.json(); // Parse the incoming JSON data
 

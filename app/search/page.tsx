@@ -1,33 +1,49 @@
-// app/search/page.tsx
-import React from 'react';
+ "use client"
+import React, { useState, useEffect } from 'react';
 import { User } from '@/lib/type';
 import { BASE_API_URL } from '@/lib/utils';
 import Search from '@/components/searchServer';
 
-interface Props {
-  initialUsers: User[];
-  regions: string[];
-}
+const SearchPage: React.FC = () => {
+  const [users, setUsers] = useState<User[]>([]);
+  const [regions, setRegions] = useState<string[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
-// Server component to fetch data
-const fetchUsers = async () => {
-  const response = await fetch(`${BASE_API_URL}/api/userdata`, { cache: 'no-store' });
-  if (!response.ok) {
-    throw new Error('Failed to fetch data');
-  }
-  return response.json();
-};
+  const fetchUsers = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(`${BASE_API_URL}/api/userdata`, { cache: 'no-store' });
+      if (!response.ok) {
+        throw new Error('Failed to fetch data');
+      }
+      const data: User[] = await response.json();
+      setUsers(data);
+      const uniqueRegions = Array.from(new Set(data.map((user) => user.region)));
+      setRegions(uniqueRegions);
+      setError(null);
+    } catch (error) {
+      setError((error as Error).message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-const SearchPage: React.FC = async () => {
-  try {
-    const users: User[] = await fetchUsers();
-    const uniqueRegions = Array.from(new Set(users.map((user) => user.region)));
+  useEffect(() => {
+    fetchUsers(); // Fetch immediately when component mounts
 
-    return <Search initialUsers={users} regions={uniqueRegions} />;
-  } catch (error) {
-    console.error('Error fetching data:', error);
-    return <div>Error loading users.</div>;
-  }
+    // Set up interval to fetch data every 10 minutes
+    const intervalId = setInterval(fetchUsers, 1 * 60 * 1000); // 10 minutes
+
+    return () => {
+      clearInterval(intervalId); // Clean up interval on component unmount
+    };
+  }, []);
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error loading users: {error}</div>;
+
+  return <Search initialUsers={users} regions={regions} />;
 };
 
 export default SearchPage;

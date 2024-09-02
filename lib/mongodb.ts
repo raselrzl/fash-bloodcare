@@ -16,10 +16,10 @@ export async function connectToDatabase() {
 
   try {
     console.log('Connecting to MongoDB...');
-    client = new MongoClient(uri); // No need for `useNewUrlParser` and `useUnifiedTopology`
+    client = new MongoClient(uri);
     await client.connect();
     console.log('Connected to MongoDB');
-    database = client.db('ZIRRAH'); // Replace with your database name
+    database = client.db(); // Default database name, if any
     return { client, database };
   } catch (error) {
     console.error('Failed to connect to MongoDB:', error);
