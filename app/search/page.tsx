@@ -15,6 +15,7 @@ const SearchPage: React.FC = () => {
     setLoading(true);
     try {
       const response = await fetch(`${BASE_API_URL}/api/userdata`, { cache: 'no-store' });
+      console.log(`${BASE_API_URL}/api/userdata`);
       if (!response.ok) {
         throw new Error('Failed to fetch data');
       }
