@@ -3,12 +3,15 @@ import React, { useState, useEffect } from 'react';
 import { User } from '@/lib/type';
 import { BASE_API_URL } from '@/lib/utils';
 import Search from '@/components/searchServer';
+import { console } from 'inspector';
 
 const SearchPage: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [regions, setRegions] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  
+  console.log(BASE_API_URL)
 
   const fetchUsers = async () => {
     setLoading(true);
