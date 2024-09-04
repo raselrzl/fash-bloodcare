@@ -14,9 +14,9 @@ const SearchPage: React.FC = () => {
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      const response = await fetch('/api/userdata', { cache: 'no-store' });
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}/api/userdata`, { cache: 'no-store' });
       console.log('BASE_API_URL in production:', process.env.NEXT_PUBLIC_BASE_API_URL);
-      console.log('BASE_API_URL in production:', process.env.BASE_API_URL);
+      console.log('BASE_API_URL:', process.env.BASE_API_URL);
       if (!response.ok) {
         throw new Error('Failed to fetch data');
       }
