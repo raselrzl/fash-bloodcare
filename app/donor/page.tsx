@@ -1,5 +1,5 @@
 import React from 'react'
-import Table from '../search/Table'
+import Table from './Table'
 
 const Donor = () => {
   return (

@@ -1,6 +1,5 @@
-// \app\search\Table.tsx
 "use client";
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { User } from '@/lib/type'; // Adjust the path based on your actual structure
 import { BASE_API_URL } from '@/lib/utils'; // Adjust the path based on your actual structure
 
@@ -9,26 +8,26 @@ const Table: React.FC = () => {
   const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
   const [bloodGroups, setBloodGroups] = useState<string[]>([]);
   const [selectedBloodGroup, setSelectedBloodGroup] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await fetch(`${BASE_API_URL}/api/userdata`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch data');
-        }
-        const data: User[] = await response.json();
-        setUsers(data);
-        setFilteredUsers(data);
-        const groups = Array.from(new Set(data.map((user) => user.bloodGroup)));
-        setBloodGroups(groups);
-      } catch (error) {
-        console.error('Error fetching users:', error);
+  const fetchUsers = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(`${BASE_API_URL}/api/userdata`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch data');
       }
-    };
-
-    fetchUsers();
-  }, []);
+      const data: User[] = await response.json();
+      setUsers(data);
+      setFilteredUsers(data);
+      const groups = Array.from(new Set(data.map((user) => user.bloodGroup)));
+      setBloodGroups(groups);
+    } catch (error) {
+      console.error('Error fetching users:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleBloodGroupChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const bloodGroup = event.target.value;
@@ -42,6 +41,15 @@ const Table: React.FC = () => {
 
   return (
     <div className="p-4">
+      <div className="mb-4">
+        <button
+          onClick={fetchUsers}
+          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          disabled={isLoading}
+        >
+          {isLoading ? 'Loading...' : 'Fetch Users'}
+        </button>
+      </div>
       <div className="mb-4">
         <select
           value={selectedBloodGroup}
