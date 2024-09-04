@@ -1,6 +1,6 @@
 import { MongoClient, Db } from 'mongodb';
 
-const uri = process.env.MONGODB_URI as string;
+const uri: string = 'mongodb+srv://rasel6041:100Zeras@cluster0.zlo8hzx.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
 
 if (!uri) {
   throw new Error('MONGODB_URI environment variable is not defined');
