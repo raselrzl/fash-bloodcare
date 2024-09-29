@@ -10,9 +10,9 @@ export default function ImageSlider() {
   const slides: Slide[] = [
     { url: 'assets/images/b110.jpg' },
     { url: 'assets/images/b111.jpg' },
-    { url: 'assets/images/b113.avif'},
+    { url: 'assets/images/b113.avif' },
     { url: 'assets/images/b111.jpg' },
-    { url: 'assets/images/b114.webp'},
+    { url: 'assets/images/b114.webp' },
   ];
 
   const [currentIndex, setCurrentIndex] = useState<number>(0);
@@ -23,23 +23,17 @@ export default function ImageSlider() {
     setCurrentIndex(newIndex);
   };
 
-  const nextSlide = () => {
-    const isLastSlide = currentIndex === slides.length - 1;
-    const newIndex = isLastSlide ? 0 : currentIndex + 1;
-    setCurrentIndex(newIndex);
-  };
-
   const goToSlide = (slideIndex: number) => {
     setCurrentIndex(slideIndex);
   };
 
   useEffect(() => {
     const autoSlide = setInterval(() => {
-      nextSlide();
+      setCurrentIndex((prevIndex) => (prevIndex === slides.length - 1 ? 0 : prevIndex + 1));
     }, 3000);
 
     return () => clearInterval(autoSlide);
-  }, [currentIndex]);
+  }, [slides.length]);
 
   return (
     <div className="relative max-w-[1000px] max-h-[600px] w-full mx-auto py-8 px-1/2 group m-20">
@@ -55,7 +49,7 @@ export default function ImageSlider() {
 
       {/* Right Arrow */}
       <div className="absolute top-[50%] translate-x-0 translate-y-[-50%] right-4 sm:right-6 md:right-8 lg:right-10 text-xl sm:text-2xl md:text-3xl rounded-full p-2 bg-black/20 text-white cursor-pointer hover:bg-black/30 transition">
-        <BsChevronCompactRight onClick={nextSlide} size={30} />
+        <BsChevronCompactRight onClick={() => setCurrentIndex((prevIndex) => (prevIndex === slides.length - 1 ? 0 : prevIndex + 1))} size={30} />
       </div>
 
       {/* Pagination Dots */}
