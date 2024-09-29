@@ -1,4 +1,4 @@
-// components/Search.tsx
+/* // components/Search.tsx
 "use client"; // Ensure this is a client component
 import React, { useEffect, useState } from 'react';
 import LoadingSpinner from '@/components/LoadingSpinner';
@@ -320,3 +320,4 @@ const Search: React.FC<Props> = ({ initialUsers, regions = [] }) => {
 
 export default Search;
 
+ */

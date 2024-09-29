@@ -1,15 +1,15 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import NavLogo from "@/components/NavLogo";
-import Footer from "@/components/Footer";
 import Head from "next/head";
+import NavLogo from "./components/NavLogo";
+import Footer from "./components/Footer";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "fash-care",
-  description: "fash-care, A complete Medical Solution",
+  title: "MBPI",
+  description: "MBPI, Blood donation Community",
 };
 
 export default function RootLayout({

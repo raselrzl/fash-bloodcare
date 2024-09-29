@@ -1,8 +1,8 @@
 "use client";
 import { useParams } from "next/navigation";
-import NavigationLink from "@/components/NavigationLink";
 import Image from "next/image";
 import React from "react";
+import NavigationLink from "@/app/components/NavigationLink";
 
 const Success = () => {
   const params = useParams();

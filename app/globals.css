@@ -51,3 +51,29 @@ body {
 .animate-slide-in-fade-in-loop {
   animation: slideInFadeIn 3s ease-out infinite;
 }
+
+
+@keyframes movingBorder {
+  0% {
+    border-color: #ff0000; /* Red */
+  }
+  25% {
+    border-color: #00ff00; /* Green */
+  }
+  50% {
+    border-color: #0000ff; /* Blue */
+  }
+  75% {
+    border-color: #ffff00; /* Yellow */
+  }
+  100% {
+    border-color: #ff0000; /* Back to Red */
+  }
+}
+
+.animate-moving-border {
+  border-width: 2px;
+  border-style: solid;
+  border-image: linear-gradient(270deg, red, green, blue, yellow) 1;
+  animation: movingBorder 5s linear infinite; /* Animate the border color */
+}

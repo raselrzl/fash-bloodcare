@@ -1,6 +1,4 @@
 "use client"; // Ensure this line is present if you're using client-side features
-
-import NavigationLink from "@/components/NavigationLink";
 import Image from "next/image";
 import React from "react";
 import {
@@ -9,6 +7,7 @@ import {
   FaSyringe,
   FaHandHoldingHeart,
 } from "react-icons/fa";
+import NavigationLink from "../components/NavigationLink";
 
 const Eligible: React.FC = () => {
   return (

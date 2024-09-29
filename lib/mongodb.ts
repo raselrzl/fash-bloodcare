@@ -1,37 +1,21 @@
 import { MongoClient, Db } from 'mongodb';
 
-const uri = process.env.MONGODB_URI as string;
-
-if (!uri) {
-  throw new Error('MONGODB_URI environment variable is not defined');
-}
-
-let client: MongoClient | null = null;
-let database: Db | null = null;
+let cachedClient: MongoClient | null = null;
+let cachedDb: Db | null = null;
 
 export async function connectToDatabase() {
-  if (client && database) {
-    return { client, database };
+  if (cachedClient && cachedDb) {
+    return { client: cachedClient, database: cachedDb };
   }
 
-  try {
-    console.log('Connecting to MongoDB...');
-    client = new MongoClient(uri);
-    await client.connect();
-    console.log('Connected to MongoDB');
-    database = client.db(); // Default database name, if any
-    return { client, database };
-  } catch (error) {
-    console.error('Failed to connect to MongoDB:', error);
-    throw error;
-  }
-}
+  // Create a new MongoClient instance without the outdated options
+  const client = new MongoClient(process.env.MONGODB_URI as string);
 
-export async function disconnectFromDatabase() {
-  if (client) {
-    await client.close();
-    console.log('MongoDB connection closed');
-    client = null;
-    database = null;
-  }
+  await client.connect();
+  const database = client.db('ZIRRAH'); // Ensure you use the correct database name 'ZIRRAH'
+
+  cachedClient = client;
+  cachedDb = database;
+
+  return { client, database };
 }

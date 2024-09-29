@@ -5,8 +5,12 @@ export interface User {
     phoneNumber: string;
     dateOfBirth: string;
     nidNumber: string;
-    region: string;
+   /*  region: string;
     city: string;
-    village: string;
+    village: string; */
     bloodGroup: string;
+    studyDepartment: string;
+    semester: string;
+    numberOfTimes: string;
+    availableDonar:string;
   }
