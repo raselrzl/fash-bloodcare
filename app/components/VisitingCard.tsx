@@ -42,49 +42,49 @@ const VisitingCard: React.FC = () => {
   }
 
   return (
-    <div>
-        <h1 className="items-center text-center text-4xl font-bold text-white mb-8">Contact us</h1>
-    <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-2">
-      
-
-      {adminUsers && adminUsers.length > 0 ? (
-        adminUsers.map((user, index) => (
+    <div className="px-8">
+      <h1 className="items-center text-center text-4xl font-bold text-white mb-8">
+        Contact us
+      </h1>
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-2 ">
+        {adminUsers && adminUsers.length > 0 ? (
+          adminUsers.map((user, index) => (
             <div
-            key={index}
-            className="bg-gradient-to-r from-gray-800 via-gray-900 to-black text-white p-6 shadow-lg border-4 rounded-lg animate-moving-border relative overflow-hidden"
-          >
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-2xl font-semibold flex items-center">
-                <FaUser className="mr-2 text-green-300" />
-                {user.fullName}
-              </h2>
-              <a
-                href={`tel:${user.phoneNumber}`}
-                className="text-green-500 hover:text-green-200"
-              >
-                <FaPhoneAlt className="text-2xl" />
-              </a>
-            </div>
+              key={index}
+              className="bg-gradient-to-r from-gray-800 via-gray-900 to-black text-white p-6 shadow-lg border-4 rounded-lg animate-moving-border relative overflow-hidden"
+            >
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-2xl font-semibold flex items-center">
+                  <FaUser className="mr-2 text-green-300" />
+                  {user.fullName}
+                </h2>
+                <a
+                  href={`tel:${user.phoneNumber}`}
+                  className="text-green-500 hover:text-green-200"
+                >
+                  <FaPhoneAlt className="text-2xl" />
+                </a>
+              </div>
 
-            <div className="mb-2">
-              <p className="flex items-center text-sm text-gray-300">
-                <FaEnvelope className="mr-2 text-green-500" />
-                {user.email}
-              </p>
-            </div>
+              <div className="mb-2">
+                <p className="flex items-center text-sm text-gray-300">
+                  <FaEnvelope className="mr-2 text-green-500" />
+                  {user.email}
+                </p>
+              </div>
 
-            <div className="mb-2">
-              <p className="flex items-center text-sm text-gray-300">
-                <FaPhone className="mr-2 text-green-500" />
-                {user.phoneNumber}
-              </p>
+              <div className="mb-2">
+                <p className="flex items-center text-sm text-gray-300">
+                  <FaPhone className="mr-2 text-green-500" />
+                  {user.phoneNumber}
+                </p>
+              </div>
             </div>
-          </div>
-        ))
-      ) : (
-        <p>No contacts found.</p>
-      )}
-    </div>
+          ))
+        ) : (
+          <p>No contacts found.</p>
+        )}
+      </div>
     </div>
   );
 };
