@@ -219,7 +219,7 @@ const Search: React.FC<Props> = ({ initialUsers, regions = [] }) => {
         <div className="grid grid-cols-1 gap-6 md:grid-cols-3 lg:grid-cols-4">
           {currentItems && currentItems.length > 0 ? (
             currentItems.map((user, index) => (
-              <div className="bg-gradient-to-r from-gray-800 via-gray-900 to-black text-white p-6 shadow-lg border border-gray-700 transition-transform transform hover:scale-105">
+              <div key={index} className="bg-gradient-to-r from-gray-800 via-gray-900 to-black text-white p-6 shadow-lg border border-gray-700 transition-transform transform hover:scale-105">
                 <div
                   key={index}
                   className="flex items-center justify-between mb-4"
