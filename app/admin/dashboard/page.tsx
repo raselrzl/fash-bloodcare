@@ -1,23 +1,54 @@
 // app/admin/dashboard/page.tsx
-import { connectToDatabase } from '@/lib/mongodb';
-import Search from '@/app/components/Search';
+"use client"
+import React, { useState, useEffect } from 'react';
 import { User } from '@/lib/type';
+import { BASE_API_URL } from '@/lib/utils';
+import { useRouter } from 'next/navigation';
+import Search from '@/app/components/Search';
 
-const AdminDashboard = async () => {
-  try {
-    // Server-side: Fetch data directly in the component
-    const { client } = await connectToDatabase();
-    const dbName = 'ZIRRAH';
-    const database = client.db(dbName);
-    const collection = database.collection<User>('bloodgroup'); // Specify the collection document type
-    
-    const users = await collection.find({}).toArray(); // MongoDB now knows users are of type User
+const AdminDashboard: React.FC = () => {
+  const router = useRouter();
 
-    return <Search initialUsers={users} />;
-  } catch (error) {
-    console.error('Error fetching data:', error);
-    return <div>Error loading users: {(error as Error).message}</div>;
-  }
+ 
+  const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  console.log(BASE_API_URL)
+
+   // Check if the user is logged in
+   useEffect(() => {
+    const isLoggedIn = localStorage.getItem('isLoggedIn');
+    if (isLoggedIn !== 'true') {
+      router.push('/admin'); // Redirect to admin login page
+    }
+  }, [router]); 
+
+  const fetchUsers = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch('/api/userdata', { cache: 'no-store' });
+      if (!response.ok) {
+        throw new Error('Failed to fetch data');
+      }
+      const data: User[] = await response.json();
+      setUsers(data);
+      setError(null);
+    } catch (error) {
+      setError((error as Error).message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error loading users: {error}</div>;
+
+  return <Search initialUsers={users}/>;
 };
 
-export default AdminDashboard;
+export default AdminDashboard

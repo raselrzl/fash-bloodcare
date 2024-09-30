@@ -7,7 +7,7 @@ export async function GET() {
     const dbName = 'ZIRRAH';
     const database = client.db(dbName);
     const collection = database.collection('bloodgroup');
-
+    console.log('Database connection established.');
     const users = await collection.find({}).toArray();
     const response = NextResponse.json(users);
     response.headers.set('Cache-Control', 'no-store');
