@@ -2,19 +2,13 @@ import { NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
 
 export async function GET() {
-  try {
+  try { 
     const { client } = await connectToDatabase();
-    
-    // Specify the database name directly in the API route
-    const dbName = 'ZIRRAH'; // Replace with your database name
+    const dbName = 'ZIRRAH';
     const database = client.db(dbName);
-    const collection = database.collection('bloodgroup'); // Replace with your collection name
+    const collection = database.collection('bloodgroup');
 
     const users = await collection.find({}).toArray();
-
-    /* console.log('Fetched users:', JSON.stringify(users, null, 2)); */
-
-    // Create response with cache-control headers
     const response = NextResponse.json(users);
     response.headers.set('Cache-Control', 'no-store');
 
