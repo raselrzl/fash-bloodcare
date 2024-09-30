@@ -8,13 +8,14 @@ export async function GET() {
     const database = client.db(dbName);
     const collection = database.collection('admin'); // Replace with your collection name
 
-    const adminusers = await collection.find({}).toArray();
+    const adminUsers = await collection.find({}).toArray();
 
-    /* console.log('Fetched users:', JSON.stringify(users, null, 2)); */
+    /* Debugging: Log fetched users */
+    console.log('Fetched users:', adminUsers);
 
-    // Create response with cache-control headers
-    const response = NextResponse.json(adminusers);
-    response.headers.set('Cache-Control', 'no-store');
+    // Create a response with cache-control headers to disable caching
+    const response = NextResponse.json(adminUsers);
+    response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
 
     return response;
   } catch (error) {
