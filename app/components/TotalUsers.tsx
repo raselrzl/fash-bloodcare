@@ -1,3 +1,4 @@
+import { BASE_API_URL } from '@/lib/utils';
 import { useState, useEffect } from 'react';
 
 export default function TotalUsers() {
@@ -10,7 +11,7 @@ export default function TotalUsers() {
     // Fetch user data from the API
     const fetchUserData = async () => {
       try {
-        const response = await fetch('/api/userdata');
+        const response = await fetch(`${BASE_API_URL}/api/userdata`, { cache: "no-store" });
         if (!response.ok) {
           throw new Error('Failed to fetch user data');
         }

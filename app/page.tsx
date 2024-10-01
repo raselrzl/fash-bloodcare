@@ -22,10 +22,10 @@ export default function Home() {
       </h2>
       <div className="max-w-sm mx-4 mt-4 p-4 bg-gradient-to-r from-gray-800 via-gray-900 to-black shadow-xl border border-gray-700 md:max-w-md lg:max-w-lg md:mx-6 lg:mx-8 md:mt-6 lg:mt-8 md:p-6 lg:p-8">
         <h2 className="text-2xl font-semibold text-white text-center mb-4 md:text-3xl lg:text-4xl md:mb-6 lg:mb-8">
-          MBPI-LifeLink
+        Blood Donation Community Moulvibazar
         </h2>
         <p className="text-gray-300 text-center mb-4 text-sm opacity-50 md:text-base lg:text-lg md:opacity-75 lg:opacity-80">
-          MBPI Blood Donation Community Moulvibazar is a non-profit organization
+          Blood Donation Community Moulvibazar (MBPI) is a non-profit organization
           committed to creating a supportive environment for blood donation.
           Join us to easily register your blood group, search for donors, and
           check your eligibility to donate. Together, we can connect donors and

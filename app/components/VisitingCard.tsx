@@ -1,3 +1,4 @@
+import { BASE_API_URL } from "@/lib/utils";
 import React, { useState, useEffect } from "react";
 import { FaEnvelope, FaPhone, FaPhoneAlt, FaUser } from "react-icons/fa";
 
@@ -16,7 +17,7 @@ const VisitingCard: React.FC = () => {
     // Fetch admin user data from the API
     const fetchAdminUsers = async () => {
       try {
-        const response = await fetch("/api/adminuser");
+        const response = await fetch(`${BASE_API_URL}/api/adminuser`, { cache: "no-store" });
         if (!response.ok) {
           throw new Error("Failed to fetch admin user data");
         }
