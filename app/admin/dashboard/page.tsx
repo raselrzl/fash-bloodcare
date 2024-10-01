@@ -10,9 +10,9 @@ const AdminDashboard: React.FC = () => {
   const router = useRouter();
 
  
-  const [users, setUsers] = useState<User[]>([]);
+ /*  const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null); */
 
    // Check if the user is logged in
    useEffect(() => {
@@ -22,7 +22,7 @@ const AdminDashboard: React.FC = () => {
     }
   }, [router]); 
 
-  const fetchUsers = async () => {
+/*   const fetchUsers = async () => {
     setLoading(true);
     try {
       const response = await fetch(`${BASE_API_URL}/api/adminuser`, { cache: "no-store" });
@@ -46,7 +46,7 @@ const AdminDashboard: React.FC = () => {
   }, []);
 
   if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error loading users: {error}</div>;
+  if (error) return <div>Error loading users: {error}</div>; */
 
   return <Search/>;
 };
