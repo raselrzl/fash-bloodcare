@@ -21,7 +21,6 @@ const VisitingCard: React.FC = () => {
         if (!response.ok) {
           throw new Error("Failed to fetch admin user data");
         }
-
         const data: AdminUser[] = await response.json();
         setAdminUsers(data);
         setLoading(false);
