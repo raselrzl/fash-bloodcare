@@ -305,7 +305,7 @@ const UserForm: React.FC = () => {
               onChange={(e) =>
                 setFormData({ ...formData, name: e.target.value })
               }
-              placeholder="Full Name"
+              placeholder="Full Name *"
               className="bg-gray-800 font-bold text-white border border-gray-700 px-4 py-2 w-full"
               required
             />
@@ -316,7 +316,7 @@ const UserForm: React.FC = () => {
               onChange={(e) =>
                 setFormData({ ...formData, phoneNumber: e.target.value })
               }
-              placeholder="Phone Number"
+              placeholder="Phone Number *"
               className="bg-gray-800 font-bold text-white border border-gray-700 px-4 py-2 w-full"
               required
             />
@@ -370,14 +370,15 @@ const UserForm: React.FC = () => {
               className="bg-gray-800 font-bold text-white border border-gray-700 px-4 py-2 w-full"
               required
             >
-              <option value="">Select Blood Group</option>
+              <option value="">Select Blood Group *</option>
               {bloodGroups.map((group) => (
                 <option key={group} value={group}>
                   {group}
                 </option>
               ))}
             </select>
-
+            <div>
+            <label>Previous Donation Date</label>
             <input
               type="date"
               placeholder="Date of Previous Donation"
@@ -387,7 +388,9 @@ const UserForm: React.FC = () => {
               }
               className="bg-gray-800 font-bold text-white border border-gray-700 px-4 py-2 w-full"
             />
-
+            </div>
+            <div>
+            <label>Current Donation Date</label>
             <input
               type="date"
               placeholder="Date of Current Donation"
@@ -397,6 +400,7 @@ const UserForm: React.FC = () => {
               }
               className="bg-gray-800 font-bold text-white border border-gray-700 px-4 py-2 w-full"
             />
+            </div>
             <input
               type="number"
               value={formData.numberOfTimes}

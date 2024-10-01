@@ -1,67 +1,52 @@
 import { NextResponse } from 'next/server';
-import { connectToDatabase } from '@/lib/mongodb';
-
-const dbName = 'ZIRRAH'; // Define your database name here
+import { connectToDatabase } from '@/lib/mongodb'; // Ensure this path is correct
 
 export async function POST(request: Request) {
   try {
-    const { client } = await connectToDatabase(); // Get the client only
-    const database = client.db(dbName); // Specify the database name
-    const collection = database.collection('bloodgroup'); // Specify the collection
+    const { database } = await connectToDatabase(); 
+    const collection = database.collection('bloodgroup');
 
-    const userData = await request.json(); // Parse the incoming JSON data
+    // Parse incoming user data
+    const userData = await request.json();
 
-    // Get the current date
+    // Get current date
     const todaysDate = new Date();
-    
-    // Calculate the difference in months between today's date and dateOfLastDonation
-    const lastDonationDate = new Date(userData.dateOfLastDonation);
-    const diffTime = todaysDate.getTime() - lastDonationDate.getTime();
-    const diffMonths = diffTime / (1000 * 60 * 60 * 24 * 30); // Convert time difference to months
 
-    // Set availableDonar based on the difference
-    const availableDonar = diffMonths > 4 ? 'available' : 'not available';
+    // Logic to calculate availableDonar
+    let availableDonar = '';
+    if (userData.dateOfLastDonation && userData.PreviousDonation) {
+      const lastDonationDate = new Date(userData.dateOfLastDonation);
+      const previousDonationDate = new Date(userData.PreviousDonation);
+      const diffTime = lastDonationDate.getTime() - previousDonationDate.getTime();
+      const diffMonths = diffTime / (1000 * 60 * 60 * 24 * 30);
 
-    // Create the complete user object to insert or update
+      availableDonar = diffMonths >= 4 ? 'available' : 'not available';
+    }
+
     const completeUserData = {
       ...userData,
-      todaysDate, // Add today's date
-      availableDonar, // Add the availableDonar field
+      todaysDate,
+      availableDonar
     };
 
-    // Check if phone number or NID or email already exists
+    // Check if phone, NID, or email already exists
     const existingUser = await collection.findOne({
       $or: [
         { phoneNumber: userData.phoneNumber },
-        { nidNumber: userData.nidNumber },
-        { email: userData.email }
       ]
     });
 
     if (existingUser) {
       if (existingUser.phoneNumber === userData.phoneNumber) {
         return NextResponse.json(
-          { message: 'Phone number is already registered. Do you want to update the existing user?', updatePrompt: true, existingUser },
+          { message: 'Phone number already registered. Update?', updatePrompt: true, existingUser },
           { status: 200 }
-        );
-      }
-
-      if (existingUser.nidNumber === userData.nidNumber) {
-        return NextResponse.json(
-          { message: 'NID number is already registered. Try a new NID.', status: 400 }
-        );
-      }
-
-      if (existingUser.email === userData.email) {
-        return NextResponse.json(
-          { message: 'Email is already registered. Try a new Email.', status: 400 }
         );
       }
     }
 
-    // Insert data into the MongoDB collection
+    // Insert new user data
     const result = await collection.insertOne(completeUserData);
-
     console.log('User inserted:', result);
 
     return NextResponse.json({ message: 'User added successfully' });
@@ -74,17 +59,16 @@ export async function POST(request: Request) {
   }
 }
 
-// This new PUT handler will handle the update if the user confirms they want to update the existing record
 export async function PUT(request: Request) {
   try {
-    const { client } = await connectToDatabase();
-    const database = client.db(dbName);
+    const { database } = await connectToDatabase(); 
     const collection = database.collection('bloodgroup');
 
+    // Parse incoming data
     const userData = await request.json();
     const { phoneNumber } = userData;
 
-    // Update the existing user based on the phone number
+    // Update the user based on phone number
     const updateResult = await collection.updateOne(
       { phoneNumber },
       { $set: userData }
