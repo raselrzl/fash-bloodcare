@@ -1,39 +1,22 @@
+"use client";
+import React, { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import AdminUsersList from "@/app/components/AdminUserList";
-import { BASE_API_URL } from "@/lib/utils";
 
-// Define the props for the SuperAdmin component
-interface AdminUser {
-  _id: string;
-  fullName: string;
-  email: string;
-  isAdmin: boolean;
-}
+const SuperAdmin = () => {
+  const router = useRouter();
 
-// This function will now fetch the users directly in the page component (SSR by default in Next.js App Router)
-const fetchUsers = async (): Promise<AdminUser[]> => {
-  const response = await fetch(`${BASE_API_URL}/api/adminuser`, {
-    cache: 'no-store', // no caching to ensure fresh data
-  });
+  useEffect(() => {
+    const isLoggedIn = localStorage.getItem("isLoggedIn");
+    const superAdminLoggedIn = localStorage.getItem("superAdminLoggedIn");
 
-  if (!response.ok) {
-    throw new Error('Failed to fetch users');
-  }
-
-  const data = await response.json();
-  return data;
-};
-
-export default async function SuperAdminPage() {
-  let adminUsers: AdminUser[] = [];
-  let error = "";
-
-  try {
-    // Fetching users on the server side
-    adminUsers = await fetchUsers();
-  } catch (err) {
-    error = (err as Error).message;
-  }
+    // Check if user is not logged in or not a super admin
+    if (isLoggedIn !== "true" || superAdminLoggedIn !== "true") {
+      // Redirect to another page (e.g., admin dashboard)
+      router.push("/admin/dashboard");
+    }
+  }, [router]);
 
   return (
     <div>
@@ -48,8 +31,9 @@ export default async function SuperAdminPage() {
         </Link>
       </div>
 
-      {/* Pass fetched users and error to AdminUsersList */}
-      <AdminUsersList adminUsers={adminUsers} error={error} />
+      <AdminUsersList />
     </div>
   );
-}
+};
+
+export default SuperAdmin;
