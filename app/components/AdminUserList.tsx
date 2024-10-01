@@ -1,7 +1,7 @@
 // components/AdminUsersList.tsx
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import NavigationLink from "./NavigationLink";
 
 interface AdminUser {
@@ -15,10 +15,7 @@ const AdminUsersList = () => {
   const [adminUsers, setAdminUsers] = useState<AdminUser[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
-  useEffect(() => {
-    fetchUsers();
-  }, []);
+  const [hasFetched, setHasFetched] = useState(false); // New state to track if data has been fetched
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -31,6 +28,7 @@ const AdminUsersList = () => {
         setError("Error fetching users");
       } else {
         setAdminUsers(data);
+        setHasFetched(true); // Set to true after fetching data
       }
     } catch (error) {
       console.error("Error fetching users:", error);
@@ -82,64 +80,76 @@ const AdminUsersList = () => {
     }
   };
 
-  if (loading) return <div className="text-white">Loading...</div>;
-
-  if (error) return <div className="text-red-500">{error}</div>;
-
   return (
     <div className="container mx-auto p-4">
       <h2 className="text-3xl font-bold mb-6 text-white text-center">
         Admin Users
       </h2>
-      <div className="overflow-x-auto">
-        <table className="min-w-full text-left table-auto">
-          <thead className="bg-gray-700">
-            <tr>
-              <th className="py-2 px-4 text-white border-b border-gray-600">
-                Full Name
-              </th>
-              <th className="py-2 px-4 text-white border-b border-gray-600">
-                Email
-              </th>
-              <th className="py-2 px-4 text-white border-b border-gray-600">
-                Admin Status
-              </th>
-              <th className="py-2 px-4 text-white border-b border-gray-600">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {adminUsers.map((user) => (
-              <tr key={user._id} className="bg-gray-800">
-                <td className="py-2 px-4 border-b border-gray-700 text-white">
-                  {user.fullName}
-                </td>
-                <td className="py-2 px-4 border-b border-gray-700 text-white">
-                  {user.email}
-                </td>
-                <td className="py-2 px-4 border-b border-gray-700 text-white">
-                  {user.isAdmin ? "Yes" : "No"}
-                </td>
-                <td className="py-2 px-4 border-b border-gray-700">
-                  <button
-                    className="bg-green-500 text-white px-2 mx-2 py-2 text-lg font-bold hover:bg-green-600 transition duration-300 ease-in-out justify-center items-center w-48"
-                    onClick={() => toggleAdminStatus(user._id, user.isAdmin)}
-                  >
-                    {user.isAdmin ? "Revoke Admin" : "Make Admin"}
-                  </button>
-                  <button
-                    className="bg-red-500 text-white px-2 py-2 text-lg font-bold hover:bg-red-600 transition duration-300 ease-in-out justify-center items-center"
-                    onClick={() => deleteUser(user._id)}
-                  >
-                    Delete
-                  </button>
-                </td>
+
+      {/* Fetch users on button click */}
+      <button
+        className="bg-blue-500 text-white px-4 py-2 mb-4 rounded"
+        onClick={fetchUsers}
+        disabled={loading} // Disable the button while loading
+      >
+        {loading ? "Loading..." : "Adminuserlist"}
+      </button>
+
+      {error && <div className="text-red-500">{error}</div>}
+
+      {/* Conditionally render the table only if data has been fetched */}
+      {hasFetched && (
+        <div className="overflow-x-auto">
+          <table className="min-w-full text-left table-auto">
+            <thead className="bg-gray-700">
+              <tr>
+                <th className="py-2 px-4 text-white border-b border-gray-600">
+                  Full Name
+                </th>
+                <th className="py-2 px-4 text-white border-b border-gray-600">
+                  Email
+                </th>
+                <th className="py-2 px-4 text-white border-b border-gray-600">
+                  Admin Status
+                </th>
+                <th className="py-2 px-4 text-white border-b border-gray-600">
+                  Actions
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {adminUsers.map((user) => (
+                <tr key={user._id} className="bg-gray-800">
+                  <td className="py-2 px-4 border-b border-gray-700 text-white">
+                    {user.fullName}
+                  </td>
+                  <td className="py-2 px-4 border-b border-gray-700 text-white">
+                    {user.email}
+                  </td>
+                  <td className="py-2 px-4 border-b border-gray-700 text-white">
+                    {user.isAdmin ? "Yes" : "No"}
+                  </td>
+                  <td className="py-2 px-4 border-b border-gray-700">
+                    <button
+                      className="bg-green-500 text-white px-2 mx-2 py-2 text-lg font-bold hover:bg-green-600 transition duration-300 ease-in-out justify-center items-center w-48"
+                      onClick={() => toggleAdminStatus(user._id, user.isAdmin)}
+                    >
+                      {user.isAdmin ? "Revoke Admin" : "Make Admin"}
+                    </button>
+                    <button
+                      className="bg-red-500 text-white px-2 py-2 text-lg font-bold hover:bg-red-600 transition duration-300 ease-in-out justify-center items-center"
+                      onClick={() => deleteUser(user._id)}
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
       <NavigationLink />
     </div>
   );
