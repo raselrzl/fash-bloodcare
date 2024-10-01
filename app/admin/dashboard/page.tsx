@@ -24,7 +24,6 @@ const AdminDashboard: React.FC = () => {
 
   const fetchUsers = async () => {
     setLoading(true);
-    const apiPath = "/api/adminuser";
     try {
       const response = await fetch(`${BASE_API_URL}/api/adminuser`, { cache: "no-store" });
       if (!response.ok) {
@@ -40,6 +39,8 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
+  console.log(users);
+
   useEffect(() => {
     fetchUsers();
   }, []);
@@ -47,7 +48,7 @@ const AdminDashboard: React.FC = () => {
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error loading users: {error}</div>;
 
-  return <Search initialUsers={users}/>;
+  return <Search/>;
 };
 
 export default AdminDashboard

@@ -15,11 +15,12 @@ interface Errors {
   studyDepartment?: string;
   semester?: string;
   region?: string;
-  village?:string;
-  session?:string;
-  rollNumber?:string;
-  regiNumber?:string;
-  policeStation?:string;
+  village?: string;
+  session?: string;
+  rollNumber?: string;
+  regiNumber?: string;
+  policeStation?: string;
+  PreviousDonation?:string;
 }
 const UserForm: React.FC = () => {
   const router = useRouter();
@@ -38,11 +39,12 @@ const UserForm: React.FC = () => {
     semester: "",
     region: "",
     city: "",
-    village:"",
-    session:"",
-    rollNumber:"",
-    regiNumber:"",
-    policeStation:"",
+    village: "",
+    session: "",
+    rollNumber: "",
+    regiNumber: "",
+    policeStation: "",
+    PreviousDonation:"",
   });
 
   useEffect(() => {
@@ -307,7 +309,7 @@ const UserForm: React.FC = () => {
               className="bg-gray-800 font-bold text-white border border-gray-700 px-4 py-2 w-full"
               required
             />
-            
+
             <input
               type="text"
               value={formData.phoneNumber}
@@ -326,15 +328,11 @@ const UserForm: React.FC = () => {
               }
               placeholder="Email"
               className="bg-gray-800 font-bold text-white border border-gray-700 px-4 py-2 w-full"
-              required
             />
           </div>
 
-
           <div className="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0">
-            
-
-<input
+            <input
               type="text"
               value={formData.nidNumber}
               onChange={(e) =>
@@ -360,13 +358,10 @@ const UserForm: React.FC = () => {
               }
               placeholder="Registration Number"
               className="bg-gray-800 font-bold text-white border border-gray-700 px-4 py-2 w-full"
-              required
             />
           </div>
 
           <div className="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0">
-            
-            
             <select
               value={formData.bloodGroup}
               onChange={(e) =>
@@ -382,15 +377,25 @@ const UserForm: React.FC = () => {
                 </option>
               ))}
             </select>
+
             <input
               type="date"
-              placeholder="Date of Last Donation"
+              placeholder="Date of Previous Donation"
+              value={formData.PreviousDonation}
+              onChange={(e) =>
+                setFormData({ ...formData, PreviousDonation: e.target.value })
+              }
+              className="bg-gray-800 font-bold text-white border border-gray-700 px-4 py-2 w-full"
+            />
+
+            <input
+              type="date"
+              placeholder="Date of Current Donation"
               value={formData.dateOfLastDonation}
               onChange={(e) =>
                 setFormData({ ...formData, dateOfLastDonation: e.target.value })
               }
               className="bg-gray-800 font-bold text-white border border-gray-700 px-4 py-2 w-full"
-              required
             />
             <input
               type="number"
@@ -404,16 +409,12 @@ const UserForm: React.FC = () => {
           </div>
 
           <div className="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0">
-           
-           
-
             <select
               value={formData.studyDepartment}
               onChange={(e) =>
                 setFormData({ ...formData, studyDepartment: e.target.value })
               }
               className="bg-gray-800 font-bold text-white border border-gray-700 px-4 py-2 w-full"
-              required
             >
               <option value="">Select Depertment</option>
               {depertment.map((dept) => (
@@ -429,7 +430,6 @@ const UserForm: React.FC = () => {
                 setFormData({ ...formData, semester: e.target.value })
               }
               className="bg-gray-800 font-bold text-white border border-gray-700 px-4 py-2 w-full"
-              required
             >
               <option value="">Select Semester</option>
               {semesters.map((sem) => (
@@ -446,7 +446,6 @@ const UserForm: React.FC = () => {
               }
               placeholder="2011-12"
               className="bg-gray-800 font-bold text-white border border-gray-700 px-4 py-2 w-full"
-              required
             />
           </div>
           <div className="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0">
@@ -456,7 +455,6 @@ const UserForm: React.FC = () => {
                 setFormData({ ...formData, region: e.target.value })
               }
               className="bg-gray-800 text-white font-bold border border-gray-700 px-4 py-2 w-full"
-              required
             >
               <option value="">Select Region</option>
               {regions.map((region) => (
@@ -471,7 +469,6 @@ const UserForm: React.FC = () => {
                 setFormData({ ...formData, city: e.target.value })
               }
               className="bg-gray-800 text-white font-bold border border-gray-700 px-4 py-2 w-full"
-              required
             >
               <option value="">Select City</option>
               {cities.map((city) => (
@@ -487,9 +484,8 @@ const UserForm: React.FC = () => {
               onChange={(e) =>
                 setFormData({ ...formData, policeStation: e.target.value })
               }
-              placeholder="Police Station name"
+              placeholder="Enter Upazila"
               className="bg-gray-800 font-bold text-white border border-gray-700 px-4 py-2 w-full"
-              required
             />
 
             <input
@@ -500,7 +496,6 @@ const UserForm: React.FC = () => {
               }
               placeholder="Enter Village Name"
               className="bg-gray-800 font-bold text-white border border-gray-700 px-4 py-2 w-full"
-              required
             />
           </div>
 
