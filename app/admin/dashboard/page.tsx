@@ -14,8 +14,6 @@ const AdminDashboard: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  console.log('localhost api',BASE_API_URL)
-
    // Check if the user is logged in
    useEffect(() => {
     const isLoggedIn = localStorage.getItem('isLoggedIn');
@@ -28,12 +26,10 @@ const AdminDashboard: React.FC = () => {
     setLoading(true);
     const apiPath = "/api/adminuser";
     try {
-      const response = await fetch(apiPath, { cache: 'no-store' });
+      const response = await fetch(`${BASE_API_URL}/api/adminuser`, { cache: "no-store" });
       if (!response.ok) {
         throw new Error('Failed to fetch data');
       }
-
-      console.log('api',apiPath)
       const data: User[] = await response.json();
       setUsers(data);
       setError(null);
