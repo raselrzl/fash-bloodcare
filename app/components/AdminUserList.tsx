@@ -1,8 +1,8 @@
-// components/AdminUsersList.tsx
 "use client";
 
 import { useState } from "react";
 import NavigationLink from "./NavigationLink";
+import { BASE_API_URL } from "@/lib/utils";
 
 interface AdminUser {
   _id: string;
@@ -15,20 +15,21 @@ const AdminUsersList = () => {
   const [adminUsers, setAdminUsers] = useState<AdminUser[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [hasFetched, setHasFetched] = useState(false); // New state to track if data has been fetched
+  const [hasFetched, setHasFetched] = useState(false);
 
   const fetchUsers = async () => {
     setLoading(true);
     setError("");
     try {
-      const response = await fetch("/api/adminuser", { cache: 'no-store' });
+      // Use the BASE_API_URL from environment variables
+      const response = await fetch(`${BASE_API_URL}/api/adminuser`, { cache: "no-store" });
       const data = await response.json();
 
       if (!response.ok) {
         setError("Error fetching users");
       } else {
         setAdminUsers(data);
-        setHasFetched(true); // Set to true after fetching data
+        setHasFetched(true);
       }
     } catch (error) {
       console.error("Error fetching users:", error);
@@ -40,7 +41,7 @@ const AdminUsersList = () => {
 
   const toggleAdminStatus = async (userId: string, currentStatus: boolean) => {
     try {
-      const response = await fetch(`/api/adminuser/${userId}`, {
+      const response = await fetch(`${BASE_API_URL}/api/adminuser/${userId}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -64,7 +65,7 @@ const AdminUsersList = () => {
     if (!confirm("Are you sure you want to delete this user?")) return;
 
     try {
-      const response = await fetch(`/api/adminuser/${userId}`, {
+      const response = await fetch(`${BASE_API_URL}/api/adminuser/${userId}`, {
         method: "DELETE",
       });
 
@@ -90,7 +91,7 @@ const AdminUsersList = () => {
       <button
         className="bg-blue-500 text-white px-4 py-2 mb-4 rounded"
         onClick={fetchUsers}
-        disabled={loading} // Disable the button while loading
+        disabled={loading}
       >
         {loading ? "Loading..." : "Adminuserlist"}
       </button>
