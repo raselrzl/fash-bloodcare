@@ -14,6 +14,7 @@ export interface User {
     numberOfTimes: string;
     availableDonar:string;
     policeStation:string;
+    
   }
 
   export interface AdminUser {

@@ -1,4 +1,4 @@
-/* "use client";
+"use client"; // Ensure this is a client component
 import React, { useEffect, useState } from "react";
 import { BiSolidDonateBlood } from "react-icons/bi";
 import { FaChevronCircleRight, FaPhoneAlt, FaPhone, FaUser, FaHeartbeat } from "react-icons/fa";
@@ -7,21 +7,18 @@ import { LiaLayerGroupSolid } from "react-icons/lia";
 import { CgUnavailable } from "react-icons/cg";
 import { FcDepartment } from "react-icons/fc";
 import { User } from "@/lib/type";
-import { BASE_API_URL } from "@/lib/utils";
-import jsPDF from "jspdf";
-import LoadingSpinner from "./LoadingSpinner";
-import Link from "next/link";
-import NavigationLink from "./NavigationLink";
+import jsPDF from "jspdf"; // Import jsPDF
+import LoadingSpinner from "../LoadingSpinner";
+import NavigationLink from "../NavigationLink";
 
 interface Props {
-  regions?: string[];
+  users: User[];
+  error?: string | null;
 }
 
-const Search: React.FC<Props> = ({ regions = [] }) => {
-  const [users, setUsers] = useState<User[]>([]);
-  const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
+const SearchC: React.FC<Props> = ({ users: initialUsers = [], error = null }) => {
+  const [filteredUsers, setFilteredUsers] = useState<User[]>(initialUsers);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState({
     name: "",
     nidNumber: "",
@@ -29,49 +26,22 @@ const Search: React.FC<Props> = ({ regions = [] }) => {
     phoneNumber: "",
     bloodGroup: "",
   });
-  const [showAvailableDonors, setShowAvailableDonors] = useState(false); 
+  const [showAvailableDonors, setShowAvailableDonors] = useState(false);
   const bloodGroups = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
 
-
+  // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 12;
 
- 
   useEffect(() => {
-    const fetchUsers = async () => {
-      setIsLoading(true);
-      try {
-        const response = await fetch(`${BASE_API_URL}/api/userdata`, { cache: "no-store" });
-        if (!response.ok) {
-          throw new Error('Failed to fetch user data');
-        }
-        const data: User[] = await response.json();
-        setUsers(data);
-        setFilteredUsers(data); 
-        setError(null);
-      } catch (err) {
-        setError((err as Error).message);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchUsers();
-  }, []);
-
-  useEffect(() => {
-    if (!users) return; 
-    const filtered = users.filter(
+    if (!initialUsers) return; // Ensure users are defined
+    const filtered = initialUsers.filter(
       (user) =>
-        (search.name
-          ? user.name.toLowerCase().includes(search.name.toLowerCase())
-          : true) &&
+        (search.name ? user.name.toLowerCase().includes(search.name.toLowerCase()) : true) &&
         (search.nidNumber ? user.nidNumber === search.nidNumber : true) &&
-        (search.phoneNumber
-          ? user.phoneNumber.includes(search.phoneNumber)
-          : true) &&
+        (search.phoneNumber ? user.phoneNumber.includes(search.phoneNumber) : true) &&
         (search.bloodGroup ? user.bloodGroup === search.bloodGroup : true) &&
-        (!showAvailableDonors || user.availableDonar === "available") 
+        (!showAvailableDonors || user.availableDonar === "available") // Filter by available donors if checkbox is checked
     );
 
     const sortedFiltered = filtered.sort((a, b) =>
@@ -83,8 +53,10 @@ const Search: React.FC<Props> = ({ regions = [] }) => {
     );
 
     setFilteredUsers(sortedFiltered);
-    setCurrentPage(1); 
-  }, [search, showAvailableDonors, users]);
+    setCurrentPage(1); // Reset to the first page whenever filters change
+  }, [search, showAvailableDonors, initialUsers]);
+
+  // Function to download the filtered data as PDF
   const downloadPDF = () => {
     const doc = new jsPDF();
     doc.setFontSize(16);
@@ -105,6 +77,8 @@ const Search: React.FC<Props> = ({ regions = [] }) => {
 
     doc.save("Donors.pdf");
   };
+
+  // Get the current items for the current page
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filteredUsers.slice(indexOfFirstItem, indexOfLastItem);
@@ -119,6 +93,7 @@ const Search: React.FC<Props> = ({ regions = [] }) => {
         Here is our all Super Human
       </h1>
 
+      {/* Search Filters */}
       <div className="mb-6 px-10">
         <div className="flex flex-col justify-center md:flex-row md:space-x-2 space-y-4 md:space-y-0">
           <input
@@ -153,6 +128,7 @@ const Search: React.FC<Props> = ({ regions = [] }) => {
           </select>
         </div>
         <div className="flex flex-col justify-center mt-2 md:flex-row md:space-x-4 space-y-4 md:space-y-0">
+          {/* Checkbox for filtering available donors */}
           <div className="flex items-center">
             <input
               type="checkbox"
@@ -168,6 +144,8 @@ const Search: React.FC<Props> = ({ regions = [] }) => {
           </div>
         </div>
       </div>
+
+      {/* Display Users */}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3 lg:grid-cols-4">
         {currentItems && currentItems.length > 0 ? (
           currentItems.map((user, index) => (
@@ -181,7 +159,7 @@ const Search: React.FC<Props> = ({ regions = [] }) => {
                   {user.name}
                 </h2>
                 <a
-                  href={`tel:${user.phoneNumber}`} 
+                  href={`tel:${user.phoneNumber}`} // Fixed syntax error
                   className="text-green-500 hover:text-green-200"
                 >
                   <FaPhoneAlt className="text-2xl" />
@@ -234,6 +212,7 @@ const Search: React.FC<Props> = ({ regions = [] }) => {
         )}
       </div>
 
+      {/* Pagination */}
       <div className="flex justify-center mt-6">
         {Array.from({ length: totalPages }, (_, index) => (
           <button
@@ -250,6 +229,7 @@ const Search: React.FC<Props> = ({ regions = [] }) => {
         ))}
       </div>
 
+      {/* Download PDF Button */}
       <button
         onClick={downloadPDF}
         className="bg-green-500 hover:bg-blue-400 text-white px-4 py-2 rounded-lg mt-8"
@@ -257,6 +237,7 @@ const Search: React.FC<Props> = ({ regions = [] }) => {
         Download as PDF
       </button>
 
+      {/* Back to home link */}
       <div className="my-8">
         <NavigationLink />
       </div>
@@ -264,5 +245,4 @@ const Search: React.FC<Props> = ({ regions = [] }) => {
   );
 };
 
-export default Search;
- */
+export default SearchC;
