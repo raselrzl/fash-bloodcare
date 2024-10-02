@@ -2,7 +2,7 @@
 "use client"
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import UsersServer from '@/app/components/userServer';
+import UsersServer from '@/app/components/UsersServer';
 
 const AdminDashboard: React.FC = () => {
   const router = useRouter();
