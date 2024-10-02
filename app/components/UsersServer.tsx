@@ -1,5 +1,3 @@
-'use client';
-
 import { useState, useEffect } from 'react';
 import { User } from "@/lib/type";
 import Search from "./Search";
@@ -29,10 +27,7 @@ const UsersServer = () => {
     }
   };
 
-  // Fetch data on component mount
-  useEffect(() => {
-    fetchUpdatedData(); // Fetch the latest data when component mounts
-  }, []);
+ 
 
   return (
     <div>
