@@ -11,7 +11,7 @@ export async function GET() {
     const users = await collection.find({}).toArray();
     console.log(users);
     const response = NextResponse.json(users);
-    response.headers.set('Cache-Control', 'no-store'); // No caching
+    response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate'); // No caching
 
     return response;
   } catch (error) {
