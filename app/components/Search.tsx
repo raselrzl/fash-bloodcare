@@ -12,9 +12,9 @@ import jsPDF from "jspdf";
 import LoadingSpinner from "./LoadingSpinner";
 import Link from "next/link";
 import NavigationLink from "./NavigationLink";
-
+import { BASE_API_URL } from "@/lib/utils";
 interface Props {
-  users: User[];
+  users: User[]; // Initially passed from server-side component
   error?: string | null;
   regions?: string[];
 }
@@ -29,14 +29,36 @@ const Search: React.FC<Props> = ({ users = [], error = null, regions = [] }) => 
     bloodGroup: "",
   });
   const [showAvailableDonors, setShowAvailableDonors] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const bloodGroups = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 12;
 
+  // Fetch updated users from API on component mount
   useEffect(() => {
-    if (!users) return;
+    const fetchUsers = async () => {
+      setIsLoading(true);
+      try {
+        const response = await fetch(`${BASE_API_URL}/api/userdata`, { cache: "no-store" });
+        if (!response.ok) {
+          throw new Error("Error fetching users");
+        }
+        const data = await response.json();
+        setFilteredUsers(data);
+      } catch (err) {
+        console.error("Error fetching users:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-    const filtered = users.filter(
+    fetchUsers(); // Fetch updated data when the component mounts
+  }, []); // Empty dependency array ensures it runs only on mount
+
+  useEffect(() => {
+    if (!filteredUsers) return;
+
+    const filtered = filteredUsers.filter(
       (user) =>
         (search.name ? user.name.toLowerCase().includes(search.name.toLowerCase()) : true) &&
         (search.nidNumber ? user.nidNumber === search.nidNumber : true) &&
@@ -55,7 +77,7 @@ const Search: React.FC<Props> = ({ users = [], error = null, regions = [] }) => 
 
     setFilteredUsers(sortedFiltered);
     setCurrentPage(1);
-  }, [search, showAvailableDonors, users]);
+  }, [search, showAvailableDonors, filteredUsers]);
 
   const downloadPDF = () => {
     const doc = new jsPDF();
