@@ -10,17 +10,15 @@ const UsersServer = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Function to fetch user data from the server dynamically
+  // Function to fetch the latest user data from the server
   const fetchUpdatedData = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`${BASE_API_URL}/api/userdata`, {
-        method: 'GET',  // Use GET method
-        cache: 'no-cache', // Use no-cache to force fresh data
+      const response = await fetch(`${BASE_API_URL}/api/userdata/latest`, {
+        method: 'GET', // Use GET method
+        cache: 'no-store', // Disable caching
         headers: {
-          'Cache-Control': 'no-cache, no-store, must-revalidate', // Ensure fresh fetch
-          'Pragma': 'no-cache',
-          'Expires': '0',
+          'Cache-Control': 'no-store', // Ensure fresh fetch
         },
       });
 
