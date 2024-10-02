@@ -2,7 +2,7 @@
 import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import AdminUsersList from "@/app/components/AdminUserList";
+import AdminUsersServer from "@/app/components/AdminUsersServer";
 
 const SuperAdmin = () => {
   const router = useRouter();
@@ -31,7 +31,7 @@ const SuperAdmin = () => {
         </Link>
       </div>
 
-      <AdminUsersList />
+      <AdminUsersServer />
     </div>
   );
 };

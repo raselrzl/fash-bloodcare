@@ -15,3 +15,11 @@ export interface User {
     availableDonar:string;
     policeStation:string;
   }
+
+  export interface AdminUser {
+    _id: string;
+    fullName: string;
+    email: string;
+    isAdmin: boolean;
+  }
+  
