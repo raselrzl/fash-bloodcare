@@ -1,16 +1,15 @@
 import { BASE_API_URL } from '@/lib/utils';
 
-export default async function TotalUsersServer() {
+export async function fetchTotalUsers() {
   try {
-    const response = await fetch(`${BASE_API_URL}/api/userdata`, { cache: "no-store" });
+    const response = await fetch(`${BASE_API_URL}/api/userdata`, { cache: 'no-store' });
     if (!response.ok) {
       throw new Error('Failed to fetch user data');
     }
 
     const users = await response.json();
-
-    const userCount = users.length; // Set the total user count
-    const availableDonors = users.filter((user: any) => user.availableDonar === 'available').length; // Filter available donors
+    const userCount = users.length; // Total number of users
+    const availableDonors = users.filter((user: any) => user.availableDonar === 'available').length; // Count available donors
 
     return {
       userCount,

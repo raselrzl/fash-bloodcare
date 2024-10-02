@@ -1,39 +1,19 @@
 "use client";
 
-import { useEffect, useState } from 'react';
-import TotalUsersServer from './TotalUsersServer';
+import { useEffect } from 'react';
 
-const TotalUsers = () => {
-  const [userCount, setUserCount] = useState<number | null>(null);
-  const [availableDonors, setAvailableDonors] = useState<number | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+interface TotalUsersProps {
+  userCount: number | null;
+  availableDonors: number | null;
+  error: string | null;
+}
 
-  const fetchUserData = async () => {
-    const { userCount: count, availableDonors: donors, error } = await TotalUsersServer();
-
-    if (error) {
-      setError(error);
-    } else {
-      setUserCount(count);
-      setAvailableDonors(donors);
-    }
-    setLoading(false);
-  };
-
+const TotalUsers: React.FC<TotalUsersProps> = ({ userCount, availableDonors, error }) => {
   useEffect(() => {
-    fetchUserData(); // Fetch on initial mount
-
-    const interval = setInterval(() => {
-      fetchUserData(); // Fetch every 5 seconds (5000 milliseconds)
-    }, 5000);
-
-    return () => clearInterval(interval); // Cleanup interval on unmount
-  }, []);
-
-  if (loading) {
-    return <p>Loading...</p>;
-  }
+    if (error) {
+      console.error('Error fetching total users:', error);
+    }
+  }, [error]);
 
   if (error) {
     return <p>Error: {error}</p>;
