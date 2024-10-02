@@ -1,5 +1,5 @@
-import { BASE_API_URL } from '@/lib/utils';
 import { useState, useEffect } from 'react';
+import TotalUsersServer from './TotalUsersServer';
 
 export default function TotalUsers() {
   const [userCount, setUserCount] = useState<number | null>(null);
@@ -8,23 +8,15 @@ export default function TotalUsers() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Fetch user data from the API
     const fetchUserData = async () => {
-      try {
-        const response = await fetch(`${BASE_API_URL}/api/userdata`, { cache: "no-store" });
-        if (!response.ok) {
-          throw new Error('Failed to fetch user data');
-        }
-
-        const users = await response.json();
-
-        setUserCount(users.length); // Set the total user count
-        setAvailableDonors(users.filter((user: any) => user.availableDonar === 'available').length); // Filter available donors
-        setLoading(false);
-      } catch (error) {
-        setError((error as Error).message);
-        setLoading(false);
+      const { userCount, availableDonors, error } = await TotalUsersServer();
+      if (error) {
+        setError(error);
+      } else {
+        setUserCount(userCount);
+        setAvailableDonors(availableDonors);
       }
+      setLoading(false);
     };
 
     fetchUserData();
