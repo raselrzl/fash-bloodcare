@@ -6,28 +6,9 @@ import TotalUsers from "./components/TotalUsers";
 import NavigationLink from "./components/NavigationLink";
 import ImageSlider from "./components/ImageSlider";
 import VisitingCard from "./components/VisitingCard";
-import { fetchTotalUsers } from "./components/TotalUsersServer";
-import { useEffect, useState } from "react";
 
 export default function Home() {
   const router = useRouter();
-  const [userCount, setUserCount] = useState<number | null>(null);
-  const [availableDonors, setAvailableDonors] = useState<number | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  useEffect(() => {
-    const fetchData = async () => {
-      const { userCount, availableDonors, error } = await fetchTotalUsers();
-
-      if (error) {
-        setError(error);
-      } else {
-        setUserCount(userCount);
-        setAvailableDonors(availableDonors);
-      }
-    };
-
-    fetchData();
-  }, []);
 
   const handleClick = () => {
     router.push("/search");
@@ -134,7 +115,7 @@ export default function Home() {
           </a>
         </div>
         <div className="p-10">
-        <TotalUsers userCount={userCount} availableDonors={availableDonors} error={error} />
+          <TotalUsers />
         </div>
       </div>
       <NavigationLink />

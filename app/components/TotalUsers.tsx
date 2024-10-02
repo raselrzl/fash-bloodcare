@@ -1,19 +1,38 @@
-"use client";
+import { BASE_API_URL } from '@/lib/utils';
+import { useState, useEffect } from 'react';
 
-import { useEffect } from 'react';
+export default function TotalUsers() {
+  const [userCount, setUserCount] = useState<number | null>(null);
+  const [availableDonors, setAvailableDonors] = useState<number | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-interface TotalUsersProps {
-  userCount: number | null;
-  availableDonors: number | null;
-  error: string | null;
-}
-
-const TotalUsers: React.FC<TotalUsersProps> = ({ userCount, availableDonors, error }) => {
   useEffect(() => {
-    if (error) {
-      console.error('Error fetching total users:', error);
-    }
-  }, [error]);
+    // Fetch user data from the API
+    const fetchUserData = async () => {
+      try {
+        const response = await fetch(`${BASE_API_URL}/api/userdata`, { cache: "no-store" });
+        if (!response.ok) {
+          throw new Error('Failed to fetch user data');
+        }
+
+        const users = await response.json();
+
+        setUserCount(users.length); // Set the total user count
+        setAvailableDonors(users.filter((user: any) => user.availableDonar === 'available').length); // Filter available donors
+        setLoading(false);
+      } catch (error) {
+        setError((error as Error).message);
+        setLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
+  if (loading) {
+    return <p>Loading...</p>;
+  }
 
   if (error) {
     return <p>Error: {error}</p>;
@@ -42,6 +61,4 @@ const TotalUsers: React.FC<TotalUsersProps> = ({ userCount, availableDonors, err
       </div>
     </div>
   );
-};
-
-export default TotalUsers;
+}
