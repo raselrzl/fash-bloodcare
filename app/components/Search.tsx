@@ -1,4 +1,5 @@
-/* "use client";
+
+"use client";
 import React, { useEffect, useState } from "react";
 import { BiSolidDonateBlood } from "react-icons/bi";
 import { FaChevronCircleRight, FaPhoneAlt, FaPhone, FaUser, FaHeartbeat } from "react-icons/fa";
@@ -7,21 +8,19 @@ import { LiaLayerGroupSolid } from "react-icons/lia";
 import { CgUnavailable } from "react-icons/cg";
 import { FcDepartment } from "react-icons/fc";
 import { User } from "@/lib/type";
-import { BASE_API_URL } from "@/lib/utils";
 import jsPDF from "jspdf";
 import LoadingSpinner from "./LoadingSpinner";
 import Link from "next/link";
 import NavigationLink from "./NavigationLink";
 
 interface Props {
+  users: User[];
+  error?: string | null;
   regions?: string[];
 }
 
-const Search: React.FC<Props> = ({ regions = [] }) => {
-  const [users, setUsers] = useState<User[]>([]);
-  const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+const Search: React.FC<Props> = ({ users = [], error = null, regions = [] }) => {
+  const [filteredUsers, setFilteredUsers] = useState<User[]>(users);
   const [search, setSearch] = useState({
     name: "",
     nidNumber: "",
@@ -29,49 +28,21 @@ const Search: React.FC<Props> = ({ regions = [] }) => {
     phoneNumber: "",
     bloodGroup: "",
   });
-  const [showAvailableDonors, setShowAvailableDonors] = useState(false); 
+  const [showAvailableDonors, setShowAvailableDonors] = useState(false);
   const bloodGroups = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
-
-
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 12;
 
- 
   useEffect(() => {
-    const fetchUsers = async () => {
-      setIsLoading(true);
-      try {
-        const response = await fetch(`${BASE_API_URL}/api/userdata`, { cache: "no-store" });
-        if (!response.ok) {
-          throw new Error('Failed to fetch user data');
-        }
-        const data: User[] = await response.json();
-        setUsers(data);
-        setFilteredUsers(data); 
-        setError(null);
-      } catch (err) {
-        setError((err as Error).message);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+    if (!users) return;
 
-    fetchUsers();
-  }, []);
-
-  useEffect(() => {
-    if (!users) return; 
     const filtered = users.filter(
       (user) =>
-        (search.name
-          ? user.name.toLowerCase().includes(search.name.toLowerCase())
-          : true) &&
+        (search.name ? user.name.toLowerCase().includes(search.name.toLowerCase()) : true) &&
         (search.nidNumber ? user.nidNumber === search.nidNumber : true) &&
-        (search.phoneNumber
-          ? user.phoneNumber.includes(search.phoneNumber)
-          : true) &&
+        (search.phoneNumber ? user.phoneNumber.includes(search.phoneNumber) : true) &&
         (search.bloodGroup ? user.bloodGroup === search.bloodGroup : true) &&
-        (!showAvailableDonors || user.availableDonar === "available") 
+        (!showAvailableDonors || user.availableDonar === "available")
     );
 
     const sortedFiltered = filtered.sort((a, b) =>
@@ -83,8 +54,9 @@ const Search: React.FC<Props> = ({ regions = [] }) => {
     );
 
     setFilteredUsers(sortedFiltered);
-    setCurrentPage(1); 
+    setCurrentPage(1);
   }, [search, showAvailableDonors, users]);
+
   const downloadPDF = () => {
     const doc = new jsPDF();
     doc.setFontSize(16);
@@ -105,12 +77,12 @@ const Search: React.FC<Props> = ({ regions = [] }) => {
 
     doc.save("Donors.pdf");
   };
+
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filteredUsers.slice(indexOfFirstItem, indexOfLastItem);
   const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
 
-  if (isLoading) return <LoadingSpinner />;
   if (error) return <div>Error: {error}</div>;
 
   return (
@@ -265,4 +237,3 @@ const Search: React.FC<Props> = ({ regions = [] }) => {
 };
 
 export default Search;
- */
