@@ -5,7 +5,7 @@ import SearchC from "./SearchCom";
 
 const ServerSearch = async () => {
   let users: User[] = [];
-  let error = null;
+  let error: string | undefined = undefined;
 
   try {
     const response = await fetch(`${BASE_API_URL}/api/userdata`, { cache: "no-store" });

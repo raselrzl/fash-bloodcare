@@ -20,7 +20,6 @@ const AdminUsersServer = async () => {
 
   return (
     <div>
-      {/* Pass the fetched users to the client component */}
       <AdminUsersList adminUsers={adminUsers} error={error} />
     </div>
   );

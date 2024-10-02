@@ -11,9 +11,7 @@ const SuperAdmin = () => {
     const isLoggedIn = localStorage.getItem("isLoggedIn");
     const superAdminLoggedIn = localStorage.getItem("superAdminLoggedIn");
 
-    // Check if user is not logged in or not a super admin
     if (isLoggedIn !== "true" || superAdminLoggedIn !== "true") {
-      // Redirect to another page (e.g., admin dashboard)
       router.push("/admin/dashboard");
     }
   }, [router]);
