@@ -59,26 +59,26 @@ const NavigationLink: React.FC = () => {
     <div className={`fixed bottom-0 left-0 right-0 bg-black bg-opacity-75 p-4 md:p-6 rounded-t-lg shadow-lg flex items-center justify-center gap-2 md:gap-4 lg:gap-8 text-sm md:text-base lg:text-lg transition-transform duration-300 ${isVisible ? 'translate-y-0' : 'translate-y-full'}`}>
       
       {isLoggedIn && (
-        <Link href="/admin/dashboard" className={getLinkClass('/admin/dashboard')} aria-label="Search">
+        <a href="/admin/dashboard" className={getLinkClass('/admin/dashboard')} aria-label="Search">
           <FaSearch className="inline-block mr-1 md:mr-2 text-lg md:text-xl lg:text-2xl" />
           <span className="hidden md:inline">Search</span>
-        </Link>
+        </a>
       )}
 
-      <Link href="/eligible" className={getLinkClass('/eligible')} aria-label="Eligible">
+      <a href="/eligible" className={getLinkClass('/eligible')} aria-label="Eligible">
         <FaCheckCircle className="inline-block mr-1 md:mr-2 text-lg md:text-xl lg:text-2xl" />
         <span className="hidden md:inline">Eligible</span>
-      </Link>
+      </a>
 
-      <Link href="/" className={getLinkClass('/')} aria-label="Home">
+      <a href="/" className={getLinkClass('/')} aria-label="Home">
         <FaHome className="inline-block mr-1 md:mr-2 text-lg md:text-xl lg:text-2xl" />
         <span className="hidden md:inline">Home</span>
-      </Link>
+      </a>
 
-      <Link href="/register" className={getLinkClass('/register')} aria-label="Register">
+      <a href="/register" className={getLinkClass('/register')} aria-label="Register">
         <FaUserPlus className="inline-block mr-1 md:mr-2 text-lg md:text-xl lg:text-2xl" />
         <span className="hidden md:inline">Register</span>
-      </Link>
+      </a>
 
       <a href="mailto:msislam0802@gmail.com" className="text-white hover:text-green-500" aria-label="Email">
         <FaEnvelope className="inline-block mr-1 md:mr-2 text-lg md:text-xl lg:text-2xl" />
