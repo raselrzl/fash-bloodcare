@@ -1,7 +1,17 @@
+
 "use client";
 import React, { useEffect, useState } from "react";
+import { BiSolidDonateBlood } from "react-icons/bi";
+import { FaChevronCircleRight, FaPhoneAlt, FaPhone, FaUser, FaHeartbeat } from "react-icons/fa";
+import { MdEventAvailable } from "react-icons/md";
+import { LiaLayerGroupSolid } from "react-icons/lia";
+import { CgUnavailable } from "react-icons/cg";
+import { FcDepartment } from "react-icons/fc";
+import { User } from "@/lib/type";
 import jsPDF from "jspdf";
-import { User } from "@/lib/type"; // Adjust this import based on your actual file structure
+import LoadingSpinner from "./LoadingSpinner";
+import Link from "next/link";
+import NavigationLink from "./NavigationLink";
 
 interface Props {
   users: User[];
@@ -23,8 +33,9 @@ const Search: React.FC<Props> = ({ users = [], error = null, regions = [] }) => 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 12;
 
-  // Effect to filter users whenever the search criteria or users change
   useEffect(() => {
+    if (!users) return;
+
     const filtered = users.filter(
       (user) =>
         (search.name ? user.name.toLowerCase().includes(search.name.toLowerCase()) : true) &&
@@ -43,7 +54,7 @@ const Search: React.FC<Props> = ({ users = [], error = null, regions = [] }) => 
     );
 
     setFilteredUsers(sortedFiltered);
-    setCurrentPage(1); // Reset to the first page when filtering
+    setCurrentPage(1);
   }, [search, showAvailableDonors, users]);
 
   const downloadPDF = () => {
@@ -92,13 +103,17 @@ const Search: React.FC<Props> = ({ users = [], error = null, regions = [] }) => 
           <input
             type="text"
             value={search.phoneNumber}
-            onChange={(e) => setSearch({ ...search, phoneNumber: e.target.value })}
+            onChange={(e) =>
+              setSearch({ ...search, phoneNumber: e.target.value })
+            }
             placeholder="Search by Phone Number"
             className="bg-gray-800 text-white border border-gray-700 px-4 py-2 w-full md:w-1/3"
           />
           <select
             value={search.bloodGroup}
-            onChange={(e) => setSearch({ ...search, bloodGroup: e.target.value })}
+            onChange={(e) =>
+              setSearch({ ...search, bloodGroup: e.target.value })
+            }
             className="bg-gray-800 text-white border border-gray-700 px-4 py-2 w-full md:w-1/3"
           >
             <option value="">Search by Blood Group</option>
@@ -108,63 +123,114 @@ const Search: React.FC<Props> = ({ users = [], error = null, regions = [] }) => 
               </option>
             ))}
           </select>
-          <button
-            onClick={() => setShowAvailableDonors((prev) => !prev)}
-            className="bg-gray-600 text-white border border-gray-700 px-4 py-2 w-full md:w-1/3"
-          >
-            {showAvailableDonors ? "Hide Available Donors" : "Show Available Donors"}
-          </button>
-          <button
-            onClick={downloadPDF}
-            className="bg-green-600 text-white border border-gray-700 px-4 py-2 w-full md:w-1/3"
-          >
-            Download PDF
-          </button>
+        </div>
+        <div className="flex flex-col justify-center mt-2 md:flex-row md:space-x-4 space-y-4 md:space-y-0">
+          <div className="flex items-center">
+            <input
+              type="checkbox"
+              checked={showAvailableDonors}
+              onChange={(e) => setShowAvailableDonors(e.target.checked)}
+              className={`mr-2 h-6 w-6 rounded border-2 appearance-none ${
+                showAvailableDonors
+                  ? "bg-green-500 border-green-500 checked:bg-green-500 checked:border-green-500"
+                  : "border-gray-400"
+              } transition duration-200`}
+            />
+            <label className="text-white">Check Available Donors</label>
+          </div>
         </div>
       </div>
-
-      <div className="overflow-x-auto w-full px-4">
-        <table className="min-w-full border border-gray-700">
-          <thead>
-            <tr className="bg-gray-800">
-              <th className="border border-gray-600 px-4 py-2">Name</th>
-              <th className="border border-gray-600 px-4 py-2">Phone Number</th>
-              <th className="border border-gray-600 px-4 py-2">Blood Group</th>
-              <th className="border border-gray-600 px-4 py-2">Available Donor</th>
-            </tr>
-          </thead>
-          <tbody>
-            {currentItems.map((user) => (
-              <tr key={user.id} className="bg-gray-700">
-                <td className="border border-gray-600 px-4 py-2">{user.name}</td>
-                <td className="border border-gray-600 px-4 py-2">{user.phoneNumber}</td>
-                <td className="border border-gray-600 px-4 py-2">{user.bloodGroup}</td>
-                <td className="border border-gray-600 px-4 py-2">{user.availableDonar}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-3 lg:grid-cols-4">
+        {currentItems && currentItems.length > 0 ? (
+          currentItems.map((user, index) => (
+            <div
+              key={index}
+              className="bg-gradient-to-r from-gray-800 via-gray-900 to-black text-white p-6 shadow-lg border border-gray-700 transition-transform transform hover:scale-105"
+            >
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-2xl font-semibold flex items-center">
+                  <FaUser className="mr-2 text-green-300" />
+                  {user.name}
+                </h2>
+                <a
+                  href={`tel:${user.phoneNumber}`} 
+                  className="text-green-500 hover:text-green-200"
+                >
+                  <FaPhoneAlt className="text-2xl" />
+                </a>
+              </div>
+              <div className="mb-2">
+                <p className="flex items-center text-sm">
+                  <FaPhone className="mr-2 text-green-500" />
+                  {user.phoneNumber}
+                </p>
+              </div>
+              {user.availableDonar === "available" ? (
+                <div className="mb-2">
+                  <p className="flex items-center text-sm">
+                    <MdEventAvailable className="mr-2 text-green-500" />
+                    Available Donor: {user.availableDonar}{" "}
+                    <BiSolidDonateBlood className="ml-2 text-2xl text-green-500" />
+                  </p>
+                </div>
+              ) : (
+                <div className="mb-2">
+                  <p className="flex items-center text-sm">
+                    <CgUnavailable className="mr-2 text-red-500" />
+                    Unavailable Donor: {user.availableDonar}
+                  </p>
+                </div>
+              )}
+              <div className="mb-2">
+                <p className="flex items-center text-sm">
+                  <FaHeartbeat className="mr-2 text-red-400" />
+                  Blood Group: {user.bloodGroup}
+                </p>
+              </div>
+              <div className="mb-2">
+                <p className="flex items-center text-sm">
+                  <LiaLayerGroupSolid className="mr-2 text-yellow-300" />
+                  Division: {user.region}, District: {user.city}
+                </p>
+              </div>
+              <div className="mb-2">
+                <p className="flex items-center text-sm">
+                  <FcDepartment className="mr-2" />
+                  Upazila: {user.policeStation}
+                </p>
+              </div>
+            </div>
+          ))
+        ) : (
+          <p className="text-white text-center">No users found.</p>
+        )}
       </div>
 
-      {/* Pagination logic */}
-      <div className="flex justify-between mt-4">
-        <button
-          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-          disabled={currentPage === 1}
-          className="bg-gray-600 text-white px-4 py-2 rounded"
-        >
-          Previous
-        </button>
-        <span className="text-gray-200">
-          Page {currentPage} of {totalPages}
-        </span>
-        <button
-          onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-          disabled={currentPage === totalPages}
-          className="bg-gray-600 text-white px-4 py-2 rounded"
-        >
-          Next
-        </button>
+      <div className="flex justify-center mt-6">
+        {Array.from({ length: totalPages }, (_, index) => (
+          <button
+            key={index}
+            onClick={() => setCurrentPage(index + 1)}
+            className={`${
+              currentPage === index + 1
+                ? "bg-green-500 text-white"
+                : "bg-gray-700 text-gray-300"
+            } px-4 py-2 rounded-lg mx-1`}
+          >
+            {index + 1}
+          </button>
+        ))}
+      </div>
+
+      <button
+        onClick={downloadPDF}
+        className="bg-green-500 hover:bg-blue-400 text-white px-4 py-2 rounded-lg mt-8"
+      >
+        Download as PDF
+      </button>
+
+      <div className="my-8">
+        <NavigationLink />
       </div>
     </div>
   );
