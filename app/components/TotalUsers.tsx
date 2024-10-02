@@ -1,25 +1,34 @@
-import { useState, useEffect } from 'react';
+"use client";
+
+import { useEffect, useState } from 'react';
 import TotalUsersServer from './TotalUsersServer';
 
-export default function TotalUsers() {
+const TotalUsers = () => {
   const [userCount, setUserCount] = useState<number | null>(null);
   const [availableDonors, setAvailableDonors] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      const { userCount, availableDonors, error } = await TotalUsersServer();
-      if (error) {
-        setError(error);
-      } else {
-        setUserCount(userCount);
-        setAvailableDonors(availableDonors);
-      }
-      setLoading(false);
-    };
+  const fetchUserData = async () => {
+    const { userCount: count, availableDonors: donors, error } = await TotalUsersServer();
 
-    fetchUserData();
+    if (error) {
+      setError(error);
+    } else {
+      setUserCount(count);
+      setAvailableDonors(donors);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchUserData(); // Fetch on initial mount
+
+    const interval = setInterval(() => {
+      fetchUserData(); // Fetch every 5 seconds (5000 milliseconds)
+    }, 5000);
+
+    return () => clearInterval(interval); // Cleanup interval on unmount
   }, []);
 
   if (loading) {
@@ -53,4 +62,6 @@ export default function TotalUsers() {
       </div>
     </div>
   );
-}
+};
+
+export default TotalUsers;
