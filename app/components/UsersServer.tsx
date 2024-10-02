@@ -10,42 +10,48 @@ const UsersServer = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Fetch latest data from the server dynamically at runtime
+  // Function to fetch user data from the server dynamically
   const fetchUpdatedData = async () => {
-    setLoading(true); // Show loading state
+    setLoading(true);
     try {
-      const response = await fetch(`${BASE_API_URL}/api/userdata`, { cache: "no-store" });
+      const response = await fetch(`${BASE_API_URL}/api/userdata`, {
+        method: 'GET',  // Use GET method
+        cache: 'no-store', // Disable caching
+        headers: {
+          'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate', // Ensure fresh fetch
+        },
+      });
+
       if (!response.ok) {
         throw new Error("Error fetching users");
       }
+
       const data = await response.json();
-      setUsers(data);  // Update state with the fetched data
-      setError("");  // Clear any previous errors
+      setUsers(data);
+      setError("");
     } catch (err) {
       console.error(err);
-      setError("Failed to fetch users");  // Set error state if the request fails
+      setError("Failed to fetch users");
     } finally {
-      setLoading(false);  // End the loading state
+      setLoading(false);
     }
   };
 
-  // Fetch data when the component mounts (to fetch dynamically at runtime)
+  // Fetch data once when the component mounts
   useEffect(() => {
-    fetchUpdatedData(); // Fetch data when the component mounts
+    fetchUpdatedData();
   }, []);
 
   return (
     <div>
-      <button 
-        onClick={fetchUpdatedData}  // Fetch updated data on button click
+      <button
+        onClick={fetchUpdatedData}
         className="bg-blue-500 text-white px-4 py-2 rounded">
         {loading ? "Loading..." : "Fetch Updated Data"}
       </button>
 
-      {/* Show error message if present */}
       {error && <p className="text-red-500">{error}</p>}
 
-      {/* Pass users data to Search component */}
       <Search users={users} error={error} />
     </div>
   );

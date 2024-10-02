@@ -9,9 +9,9 @@ export async function GET() {
     const collection = database.collection('bloodgroup');
     console.log('Database connection established.');
     const users = await collection.find({}).toArray();
-    console.log(users)
+    console.log(users);
     const response = NextResponse.json(users);
-    response.headers.set('Cache-Control', 'no-store');
+    response.headers.set('Cache-Control', 'no-store'); // No caching
 
     return response;
   } catch (error) {
