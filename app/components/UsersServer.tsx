@@ -1,24 +1,49 @@
-import { BASE_API_URL } from "@/lib/utils";
+'use client';
+
+import { useState, useEffect } from 'react';
 import { User } from "@/lib/type";
 import Search from "./Search";
+import { BASE_API_URL } from "@/lib/utils";
 
-const UsersServer = async () => {
-  let users: User[] = [];
-  let error = "";
+const UsersServer = () => {
+  const [users, setUsers] = useState<User[]>([]);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  try {
-    const response = await fetch(`${BASE_API_URL}/api/userdata`, { cache: "no-store" });
-    if (!response.ok) {
-      throw new Error("Error fetching users");
+  // Fetch latest data from the server
+  const fetchUpdatedData = async () => {
+    setLoading(true); // Show loading state
+    try {
+      const response = await fetch(`${BASE_API_URL}/api/userdata`, { cache: "no-store" });
+      if (!response.ok) {
+        throw new Error("Error fetching users");
+      }
+      const data = await response.json();
+      setUsers(data);
+      setError("");
+    } catch (err) {
+      console.error(err);
+      setError("Failed to fetch users");
+    } finally {
+      setLoading(false); // Hide loading state
     }
-    users = await response.json();
-  } catch (err) {
-    console.error(err);
-    error = "Failed to fetch users";
-  }
+  };
+
+  // Fetch data on component mount
+  useEffect(() => {
+    fetchUpdatedData(); // Fetch the latest data when component mounts
+  }, []);
 
   return (
     <div>
+      <button 
+        onClick={fetchUpdatedData} 
+        className="bg-blue-500 text-white px-4 py-2 rounded">
+        {loading ? "Loading..." : "Fetch Updated Data"}
+      </button>
+
+      {error && <p className="text-red-500">{error}</p>}
+
       <Search users={users} error={error} />
     </div>
   );
