@@ -16,9 +16,11 @@ const UsersServer = () => {
     try {
       const response = await fetch(`${BASE_API_URL}/api/userdata`, {
         method: 'GET',  // Use GET method
-        cache: 'no-store', // Disable caching
+        cache: 'no-cache', // Use no-cache to force fresh data
         headers: {
-          'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate', // Ensure fresh fetch
+          'Cache-Control': 'no-cache, no-store, must-revalidate', // Ensure fresh fetch
+          'Pragma': 'no-cache',
+          'Expires': '0',
         },
       });
 
