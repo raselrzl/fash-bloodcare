@@ -17,10 +17,9 @@ interface Props {
   users: User[];
   error?: string | null;
   regions?: string[];
-  refreshData: () => Promise<void>;
 }
 
-const Search: React.FC<Props> = ({ users = [], error = null, regions = [],refreshData }) => {
+const Search: React.FC<Props> = ({ users = [], error = null, regions = [] }) => {
   const [filteredUsers, setFilteredUsers] = useState<User[]>(users);
   const [search, setSearch] = useState({
     name: "",
@@ -91,12 +90,6 @@ const Search: React.FC<Props> = ({ users = [], error = null, regions = [],refres
       <h1 className="text-2xl text-green-300 font-bold text-center m-6 px-4">
         Here is our all Super Human
       </h1>
-      <button
-        onClick={refreshData}
-        className="mb-4 px-4 py-2 bg-blue-500 text-white rounded"
-      >
-        Refresh Data
-      </button>
 
       <div className="mb-6 px-10">
         <div className="flex flex-col justify-center md:flex-row md:space-x-2 space-y-4 md:space-y-0">
