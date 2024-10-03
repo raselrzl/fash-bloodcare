@@ -32,21 +32,22 @@ const Search: React.FC<Props> = ({ users = [], error = null, regions = [] }) => 
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 12;
 
-    const handleFetchUsers = async () => {
-      setIsLoading(true);
-      try {
-        const response = await fetch(`${BASE_API_URL}/api/userdata`, { cache: "no-store" });
-        if (!response.ok) {
-          throw new Error("Error fetching users");
-        }
-        const data = await response.json();
-        setFilteredUsers(data); // Update the filtered users with new data
-      } catch (err) {
-        console.error("Error fetching users:", err);
-      } finally {
-        setIsLoading(false);
+    // Handle fetching users from API on button click
+  const fetchUsers = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(`${BASE_API_URL}/api/userdata`, { cache: "no-store" });
+      if (!response.ok) {
+        throw new Error("Error fetching users");
       }
-    };
+      const data = await response.json();
+      setFilteredUsers(data);
+    } catch (err) {
+      console.error("Error fetching users:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
 
   
@@ -109,7 +110,12 @@ const Search: React.FC<Props> = ({ users = [], error = null, regions = [] }) => 
       <h1 className="text-2xl text-green-300 font-bold text-center m-6 px-4">
         Here is our all Super Human
       </h1>
-
+      <button
+          className="bg-green-500 text-white px-4 py-2 mt-4 rounded"
+          onClick={fetchUsers}
+        >
+          Fetch Latest Users
+        </button>
       <div className="mb-6 px-10">
         <div className="flex flex-col justify-center md:flex-row md:space-x-2 space-y-4 md:space-y-0">
           <input
