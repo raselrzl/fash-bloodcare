@@ -8,6 +8,7 @@ const UsersServer = async () => {
 
   try {
     const response = await fetch(`${BASE_API_URL}/api/userdata`, { cache: "no-cache" });
+    console.log("API URL:", BASE_API_URL);
     if (!response.ok) {
       throw new Error("Error fetching users");
     }
