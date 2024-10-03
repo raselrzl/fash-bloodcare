@@ -10,7 +10,6 @@ import { FcDepartment } from "react-icons/fc";
 import { User } from "@/lib/type";
 import jsPDF from "jspdf";
 import LoadingSpinner from "./LoadingSpinner";
-import Link from "next/link";
 import NavigationLink from "./NavigationLink";
 import { BASE_API_URL } from "@/lib/utils";
 interface Props {
@@ -18,25 +17,22 @@ interface Props {
   error?: string | null;
   regions?: string[];
 }
-
 const Search: React.FC<Props> = ({ users = [], error = null, regions = [] }) => {
-  const [filteredUsers, setFilteredUsers] = useState<User[]>(users);
-  const [search, setSearch] = useState({
-    name: "",
-    nidNumber: "",
-    village: "",
-    phoneNumber: "",
-    bloodGroup: "",
-  });
-  const [showAvailableDonors, setShowAvailableDonors] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const bloodGroups = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 12;
+    const [filteredUsers, setFilteredUsers] = useState<User[]>(users);
+    const [search, setSearch] = useState({
+      name: "",
+      nidNumber: "",
+      village: "",
+      phoneNumber: "",
+      bloodGroup: "",
+    });
+    const [showAvailableDonors, setShowAvailableDonors] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const bloodGroups = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 12;
 
-  // Fetch updated users from API on component mount
-  useEffect(() => {
-    const fetchUsers = async () => {
+    const handleFetchUsers = async () => {
       setIsLoading(true);
       try {
         const response = await fetch(`${BASE_API_URL}/api/userdata`, { cache: "no-store" });
@@ -44,7 +40,7 @@ const Search: React.FC<Props> = ({ users = [], error = null, regions = [] }) => 
           throw new Error("Error fetching users");
         }
         const data = await response.json();
-        setFilteredUsers(data);
+        setFilteredUsers(data); // Update the filtered users with new data
       } catch (err) {
         console.error("Error fetching users:", err);
       } finally {
@@ -52,60 +48,61 @@ const Search: React.FC<Props> = ({ users = [], error = null, regions = [] }) => 
       }
     };
 
-    fetchUsers(); // Fetch updated data when the component mounts
-  }, []); // Empty dependency array ensures it runs only on mount
 
-  useEffect(() => {
-    if (!filteredUsers) return;
-
-    const filtered = filteredUsers.filter(
-      (user) =>
-        (search.name ? user.name.toLowerCase().includes(search.name.toLowerCase()) : true) &&
-        (search.nidNumber ? user.nidNumber === search.nidNumber : true) &&
-        (search.phoneNumber ? user.phoneNumber.includes(search.phoneNumber) : true) &&
-        (search.bloodGroup ? user.bloodGroup === search.bloodGroup : true) &&
-        (!showAvailableDonors || user.availableDonar === "available")
-    );
-
-    const sortedFiltered = filtered.sort((a, b) =>
-      a.availableDonar === "available" && b.availableDonar !== "available"
-        ? -1
-        : b.availableDonar === "available" && a.availableDonar !== "available"
-        ? 1
-        : 0
-    );
-
-    setFilteredUsers(sortedFiltered);
-    setCurrentPage(1);
-  }, [search, showAvailableDonors, filteredUsers]);
-
-  const downloadPDF = () => {
-    const doc = new jsPDF();
-    doc.setFontSize(16);
-    doc.text("Filtered Donor Data", 10, 10);
-    doc.setFontSize(12);
-
-    if (filteredUsers.length === 0) {
-      doc.text("No donors found for the current search.", 10, 20);
-    } else {
-      filteredUsers.forEach((user, index) => {
-        doc.text(
-          `${index + 1}. Name: ${user.name}, Phone: ${user.phoneNumber}, Blood Group: ${user.bloodGroup}`,
-          10,
-          20 + index * 10
-        );
-      });
+  
+    useEffect(() => {
+      const filtered = users.filter(
+        (user) =>
+          (search.name ? user.name.toLowerCase().includes(search.name.toLowerCase()) : true) &&
+          (search.nidNumber ? user.nidNumber === search.nidNumber : true) &&
+          (search.phoneNumber ? user.phoneNumber.includes(search.phoneNumber) : true) &&
+          (search.bloodGroup ? user.bloodGroup === search.bloodGroup : true) &&
+          (!showAvailableDonors || user.availableDonar === "available")
+      );
+  
+      const sortedFiltered = filtered.sort((a, b) =>
+        a.availableDonar === "available" && b.availableDonar !== "available"
+          ? -1
+          : b.availableDonar === "available" && a.availableDonar !== "available"
+          ? 1
+          : 0
+      );
+  
+      setFilteredUsers(sortedFiltered);
+      setCurrentPage(1); 
+    }, [search, showAvailableDonors, users]);
+  
+    const downloadPDF = () => {
+      const doc = new jsPDF();
+      doc.setFontSize(16);
+      doc.text("Filtered Donor Data", 10, 10);
+      doc.setFontSize(12);
+  
+      if (filteredUsers.length === 0) {
+        doc.text("No donors found for the current search.", 10, 20);
+      } else {
+        filteredUsers.forEach((user, index) => {
+          doc.text(
+            `${index + 1}. Name: ${user.name}, Phone: ${user.phoneNumber}, Blood Group: ${user.bloodGroup}`,
+            10,
+            20 + index * 10
+          );
+        });
+      }
+  
+      doc.save("Donors.pdf");
+    };
+  
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentItems = filteredUsers.slice(indexOfFirstItem, indexOfLastItem);
+    const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
+  
+    if (error) return <div>Error: {error}</div>;
+  
+    if (isLoading) {
+      return <LoadingSpinner />;
     }
-
-    doc.save("Donors.pdf");
-  };
-
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredUsers.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
-
-  if (error) return <div>Error: {error}</div>;
 
   return (
     <div className="min-h-screen flex flex-col items-center text-gray-200 py-4 px-2 overflow-x-hidden">

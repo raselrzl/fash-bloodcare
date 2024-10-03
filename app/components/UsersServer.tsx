@@ -12,6 +12,7 @@ const UsersServer = async () => {
       throw new Error("Error fetching users");
     }
     users = await response.json();
+    console.log(users)
   } catch (err) {
     console.error(err);
     error = "Failed to fetch users";
