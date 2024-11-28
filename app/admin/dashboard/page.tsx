@@ -17,7 +17,7 @@ const AdminDashboard: React.FC = async () => {
   // Render UsersServer directly
   return (
     <div>
-      <UsersServer />
+      <UsersServer />  
     </div>
   );
 };

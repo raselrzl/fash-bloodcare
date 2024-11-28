@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import NavigationLink from '../components/NavigationLink';
+import { BASE_API_URL } from '@/lib/utils';
 
 const AdminAuth = () => {
   const [isRegister, setIsRegister] = useState(false);
@@ -34,7 +35,7 @@ const AdminAuth = () => {
   const handleLogin = async () => {
     try {
       setLoading(true);
-      const res = await fetch('/api/login', {
+      const res = await fetch(`${BASE_API_URL}/api/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -75,7 +76,7 @@ const AdminAuth = () => {
   const handleRegister = async () => {
     try {
       setLoading(true);
-      const res = await fetch('/api/register', {
+      const res = await fetch(`${BASE_API_URL}/api/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
