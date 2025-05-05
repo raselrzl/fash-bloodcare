@@ -1,7 +1,7 @@
 import { BASE_API_URL } from "@/lib/utils";
 import React, { useState, useEffect } from "react";
 import { FaEnvelope, FaPhone, FaPhoneAlt, FaUser } from "react-icons/fa";
-
+import { unstable_noStore as noStore } from "next/cache";
 interface AdminUser {
   fullName: string;
   phoneNumber: string;
@@ -9,6 +9,7 @@ interface AdminUser {
 }
 
 const VisitingCard: React.FC = () => {
+  noStore()
   const [adminUsers, setAdminUsers] = useState<AdminUser[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);

@@ -1,9 +1,10 @@
 import { BASE_API_URL } from "@/lib/utils";
 import AdminUsersList from "./AdminUserList";
 import { AdminUser } from "@/lib/type";
-
+import { unstable_noStore as noStore } from "next/cache";
 // Server-side data fetching component
 const AdminUsersServer = async () => {
+  noStore();
   let adminUsers: AdminUser[] = [];
   let error = '';
 

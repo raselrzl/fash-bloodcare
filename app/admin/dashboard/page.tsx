@@ -3,8 +3,9 @@
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import UsersServer from '@/app/components/UsersServer';
-
+import { unstable_noStore as noStore } from "next/cache";
 const AdminDashboard: React.FC = async () => {
+  noStore()
   const router = useRouter();
 
   useEffect(() => {

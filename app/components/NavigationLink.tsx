@@ -5,8 +5,9 @@ import { useRouter } from 'next/navigation';
 import { FaUserPlus, FaCheckCircle, FaHome, FaEnvelope, FaSearch } from 'react-icons/fa';
 import { BiLogOutCircle } from "react-icons/bi";
 import { RiLoginCircleFill } from "react-icons/ri";
-
+import { unstable_noStore as noStore } from "next/cache";
 const NavigationLink: React.FC = () => {
+  noStore();
   const [currentPath, setCurrentPath] = useState<string | null>(null);
   const [isVisible, setIsVisible] = useState(true);
   const lastScrollTop = useRef(0);

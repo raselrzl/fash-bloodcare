@@ -11,12 +11,14 @@ import { User } from "@/lib/type";
 import jsPDF from "jspdf";
 import LoadingSpinner from "./LoadingSpinner";
 import NavigationLink from "./NavigationLink";
+import { unstable_noStore as noStore } from "next/cache";
 interface Props {
   users: User[]; // Initially passed from server-side component
   error?: string | null;
   regions?: string[];
 }
 const Search: React.FC<Props> = ({ users = [], error = null, regions = [] }) => {
+  noStore();
     const [filteredUsers, setFilteredUsers] = useState<User[]>(users);
     const [search, setSearch] = useState({
       name: "",

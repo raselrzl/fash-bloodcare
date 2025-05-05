@@ -1,7 +1,8 @@
 import { BASE_API_URL } from '@/lib/utils';
 import { useState, useEffect } from 'react';
-
+import { unstable_noStore as noStore } from "next/cache";
 export default function TotalUsers() {
+noStore();
   const [userCount, setUserCount] = useState<number | null>(null);
   const [availableDonors, setAvailableDonors] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);

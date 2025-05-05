@@ -1,8 +1,9 @@
 import { BASE_API_URL } from "@/lib/utils";
 import { User } from "@/lib/type";
 import Search from "./Search";
-
+import { unstable_noStore as noStore } from "next/cache";
 const UsersServer = async () => {
+noStore()
   let users: User[] = [];
   let error = "";
 

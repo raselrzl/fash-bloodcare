@@ -3,8 +3,9 @@ import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import AdminUsersServer from "@/app/components/AdminUsersServer";
-
+import { unstable_noStore as noStore } from "next/cache";
 const SuperAdmin = () => {
+  noStore()
   const router = useRouter();
 
   useEffect(() => {

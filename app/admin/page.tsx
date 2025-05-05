@@ -3,8 +3,10 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import NavigationLink from '../components/NavigationLink';
 import { BASE_API_URL } from '@/lib/utils';
+import { unstable_noStore as noStore } from "next/cache";
 
 const AdminAuth = () => {
+  noStore();
   const [isRegister, setIsRegister] = useState(false);
   const [formData, setFormData] = useState({
     fullName: '',

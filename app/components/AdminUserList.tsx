@@ -3,13 +3,14 @@
 import { useState } from "react";
 import { BASE_API_URL } from "@/lib/utils";
 import { AdminUser } from "@/lib/type";
-
+import { unstable_noStore as noStore } from "next/cache";
 interface AdminUsersListProps {
   adminUsers: AdminUser[]; // Expect this prop from the server-side component
   error?: string; // Error message passed as prop
 }
 
 const AdminUsersList = ({ adminUsers: initialUsers = [], error = "" }: AdminUsersListProps) => {
+  noStore();
   const [adminUsers, setAdminUsers] = useState<AdminUser[]>(initialUsers);
 
   const toggleAdminStatus = async (userId: string, currentStatus: boolean) => {
